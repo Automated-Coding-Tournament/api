@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 @Data
 @NoArgsConstructor
@@ -25,11 +26,30 @@ public class UserEntity {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "surname")
+    private String surname;
+
     @Column(name = "username")
     private String username;
 
     @Column(name = "password")
     private String password;
+
+    @Email
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "points")
+    private int points;
+
+    @Column(name = "level")
+    private String level;
 
     @Column(name = "role")
     private RoleEnum role;
