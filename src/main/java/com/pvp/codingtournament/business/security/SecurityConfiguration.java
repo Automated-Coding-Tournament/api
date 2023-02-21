@@ -25,13 +25,14 @@ public class SecurityConfiguration {
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .csrf()
+                .disable()
                 .addFilterAfter(new JWTTokenGenerationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/login").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .csrf()
-                .disable()
                 .httpBasic();
         return http.build();
     }
