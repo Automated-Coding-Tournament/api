@@ -2,6 +2,7 @@ package com.pvp.codingtournament.business.security;
 
 import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,12 +20,14 @@ import java.util.Optional;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
+    private final PasswordEncoder encoder;
 
-    @Autowired
-    PasswordEncoder encoder;
+    private final UserRepository userRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    public CustomAuthenticationProvider(PasswordEncoder encoder, UserRepository userRepository) {
+        this.encoder = encoder;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
