@@ -1,6 +1,7 @@
 package com.pvp.codingtournament.business.security;
 
 import com.pvp.codingtournament.business.security.filter.JWTTokenGenerationFilter;
+import com.pvp.codingtournament.business.security.filter.JWTTokenValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +29,7 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .addFilterAfter(new JWTTokenGenerationFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .anyRequest()
