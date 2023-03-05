@@ -5,6 +5,7 @@ import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.UserService;
 import com.pvp.codingtournament.handler.exception.DuplicateEmailException;
+import com.pvp.codingtournament.handler.exception.DuplicateUsernameAndEmailException;
 import com.pvp.codingtournament.handler.exception.DuplicateUsernameException;
 import com.pvp.codingtournament.mapper.UserMapStruct;
 import com.pvp.codingtournament.model.UserDto;
@@ -27,6 +28,10 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto user) {
         Optional<UserEntity> optionalUserEntityUsername = userRepository.findByUsername(user.getUsername());
         Optional<UserEntity> optionalUserEntityEmail = userRepository.findByEmail(user.getEmail());
+
+        if (optionalUserEntityUsername.isPresent() && optionalUserEntityEmail.isPresent()){
+            throw new DuplicateUsernameAndEmailException();
+        }
 
         if (optionalUserEntityUsername.isPresent()){
             throw new DuplicateUsernameException();
