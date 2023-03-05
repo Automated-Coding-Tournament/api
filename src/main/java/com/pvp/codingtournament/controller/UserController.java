@@ -25,7 +25,7 @@ public class UserController {
 
     @ApiOperation("Creates a new user")
     @ApiResponses({
-            @ApiResponse(code = 204, message = "Username or email is taken"),
+            @ApiResponse(code = 409, message = "Username and/or email is taken"),
             @ApiResponse(code = 201, message = "User created")
     })
     @PostMapping("/register")
