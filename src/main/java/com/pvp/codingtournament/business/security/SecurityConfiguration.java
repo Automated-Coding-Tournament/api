@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                 .addFilterAfter(new JWTTokenGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTTokenValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/user/register", "/swagger-ui/").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

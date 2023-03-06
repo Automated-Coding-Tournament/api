@@ -1,6 +1,7 @@
 package com.pvp.codingtournament.business.repository.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pvp.codingtournament.business.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
