@@ -7,8 +7,10 @@ import com.pvp.codingtournament.business.service.UserService;
 import com.pvp.codingtournament.handler.exception.DuplicateEmailException;
 import com.pvp.codingtournament.handler.exception.DuplicateUsernameAndEmailException;
 import com.pvp.codingtournament.handler.exception.DuplicateUsernameException;
+import com.pvp.codingtournament.handler.exception.UserNotFoundException;
 import com.pvp.codingtournament.mapper.UserMapStruct;
 import com.pvp.codingtournament.model.UserDto;
+import com.pvp.codingtournament.model.UserEditDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,5 +49,21 @@ public class UserServiceImpl implements UserService {
         userEntity.setPoints(0);
 
         return userMapper.entityToDto(userRepository.save(userEntity));
+    }
+
+    @Override
+    public UserDto editUser(String username, UserEditDto user) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
+        if (!optionalUserEntity.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        UserEntity userEntity = optionalUserEntity.get();
+        userEntity.setName(user.getName());
+        userEntity.setSurname(user.getSurname());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setPhoneNumber(user.getPhoneNumber());
+        userRepository.save(userEntity);
+        return userMapper.entityToDto(userEntity);
     }
 }
