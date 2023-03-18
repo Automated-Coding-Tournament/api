@@ -36,6 +36,7 @@ public class SecurityConfiguration {
                 .addFilterBefore(new JWTTokenValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/login", "/user/register", "/swagger-ui/").permitAll()
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

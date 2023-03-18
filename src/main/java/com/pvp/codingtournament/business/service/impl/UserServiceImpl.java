@@ -4,14 +4,15 @@ import com.pvp.codingtournament.business.enums.RoleEnum;
 import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.UserService;
-import com.pvp.codingtournament.handler.exception.DuplicateEmailException;
-import com.pvp.codingtournament.handler.exception.DuplicateUsernameAndEmailException;
-import com.pvp.codingtournament.handler.exception.DuplicateUsernameException;
+import com.pvp.codingtournament.handler.Error;
+import com.pvp.codingtournament.handler.ErrorModel;
+import com.pvp.codingtournament.handler.exception.CustomException;
 import com.pvp.codingtournament.handler.exception.UserNotFoundException;
 import com.pvp.codingtournament.mapper.UserMapStruct;
 import com.pvp.codingtournament.model.UserDto;
 import com.pvp.codingtournament.model.UserEditDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,18 +31,22 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto user) {
         Optional<UserEntity> optionalUserEntityUsername = userRepository.findByUsername(user.getUsername());
         Optional<UserEntity> optionalUserEntityEmail = userRepository.findByEmail(user.getEmail());
-
-        if (optionalUserEntityUsername.isPresent() && optionalUserEntityEmail.isPresent()){
-            throw new DuplicateUsernameAndEmailException();
-        }
+        ErrorModel errorModel = new ErrorModel();
 
         if (optionalUserEntityUsername.isPresent()){
-            throw new DuplicateUsernameException();
+            errorModel.getErrors().add(new Error("username", "Username is taken"));
         }
 
         if (optionalUserEntityEmail.isPresent()){
-            throw new DuplicateEmailException();
+            errorModel.getErrors().add(new Error("email", "Email is taken"));
         }
+
+        if (errorModel.getErrors().size() > 0){
+            errorModel.setStatus(HttpStatus.CONFLICT);
+            errorModel.setMessage("Validation failed with " + errorModel.getErrors().size() + " errors");
+            throw new CustomException(errorModel);
+        }
+
         UserEntity userEntity = userMapper.dtoToEntity(user);
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userEntity.setRole(RoleEnum.ROLE_USER);
