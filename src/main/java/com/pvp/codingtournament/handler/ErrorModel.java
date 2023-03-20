@@ -5,12 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ErrorModel {
     private HttpStatus status;
-    private String statusName;
+    private ArrayList<Error> errors = new ArrayList<>();
     private String message;
-    private String path;
+
+    public ErrorModel(HttpStatus status, String message) {
+        this.status = status;
+        this.message = message;
+    }
 }

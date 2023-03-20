@@ -3,6 +3,7 @@ package com.pvp.codingtournament.controller;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.UserService;
 import com.pvp.codingtournament.model.UserDto;
+import com.pvp.codingtournament.model.UserEditDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -12,7 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,4 +38,15 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(userEntity), HttpStatus.CREATED);
     }
 
+    @ApiOperation("Edits existing user")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "User not found"),
+            @ApiResponse(code = 403, message = "Forbidden (from editing this users data)"),
+            @ApiResponse(code = 200, message = "User data edited")
+    })
+    @PutMapping("/edit/{username}")
+    @PreAuthorize("#username == authentication.principal || hasRole('ADMIN')")
+    public ResponseEntity<UserDto> editUser(@PathVariable("username") String username, @RequestBody UserEditDto userEditDto){
+        return new ResponseEntity<>(userService.editUser(username, userEditDto), HttpStatus.OK);
+    }
 }
