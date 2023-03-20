@@ -71,4 +71,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
         return userMapper.entityToDto(userEntity);
     }
+
+    @Override
+    public UserDto getUser(String username) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
+        if (!optionalUserEntity.isPresent()){
+            throw new UserNotFoundException();
+        }
+        return userMapper.entityToDto(optionalUserEntity.get());
+    }
 }

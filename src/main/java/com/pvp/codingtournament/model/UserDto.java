@@ -28,8 +28,8 @@ public class UserDto {
     private String email;
     @ApiModelProperty(value = "Phone number of the user", example = "+398 658 12356")
     private String phoneNumber;
-    @ApiModelProperty(value = "Current held points of the user", hidden = true)
+    @ApiModelProperty(value = "Current held points of the user", required = false, notes = "Not needed for user creation")
     private int points;
-    @ApiModelProperty(value = "Level of the user", hidden = true)
+    @ApiModelProperty(value = "Level of the user", required = false, notes = "Not needed for user creation")
     private String level;
 }
