@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,5 +49,17 @@ public class UserController {
     @PreAuthorize("#username == authentication.principal || hasRole('ADMIN')")
     public ResponseEntity<UserDto> editUser(@PathVariable("username") String username, @RequestBody UserEditDto userEditDto){
         return new ResponseEntity<>(userService.editUser(username, userEditDto), HttpStatus.OK);
+    }
+
+    @ApiOperation("Gets existing user details")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "User not found"),
+            @ApiResponse(code = 403, message = "Forbidden (from getting this users data)"),
+            @ApiResponse(code = 302, message = "User data found")
+    })
+    @GetMapping("/{username}")
+    @PreAuthorize("#username == authentication.principal || hasRole('ADMIN')")
+    public ResponseEntity<UserDto> getUser(@PathVariable("username") String username){
+        return new ResponseEntity<>(userService.getUser(username), HttpStatus.FOUND);
     }
 }

@@ -8,4 +8,6 @@ public interface UserService {
 
     public UserDto createUser(UserDto user);
     public UserDto editUser(String username, UserEditDto user);
+
+    public UserDto getUser(String username);
 }
