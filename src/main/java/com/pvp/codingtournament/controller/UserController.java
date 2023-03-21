@@ -55,11 +55,11 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "User not found"),
             @ApiResponse(code = 403, message = "Forbidden (from getting this users data)"),
-            @ApiResponse(code = 302, message = "User data found")
+            @ApiResponse(code = 200, message = "User data found")
     })
     @GetMapping("/{username}")
     @PreAuthorize("#username == authentication.principal || hasRole('ADMIN')")
     public ResponseEntity<UserDto> getUser(@PathVariable("username") String username){
-        return new ResponseEntity<>(userService.getUser(username), HttpStatus.FOUND);
+        return new ResponseEntity<>(userService.getUser(username), HttpStatus.OK);
     }
 }
