@@ -2,6 +2,7 @@ package com.pvp.codingtournament.business.repository.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pvp.codingtournament.business.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,8 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -54,4 +57,8 @@ public class UserEntity {
 
     @Column(name = "role")
     private RoleEnum role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private Set<TaskEntity> tasks;
 }

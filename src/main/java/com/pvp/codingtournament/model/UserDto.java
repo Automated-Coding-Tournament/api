@@ -1,7 +1,6 @@
 package com.pvp.codingtournament.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.pvp.codingtournament.business.enums.RoleEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
