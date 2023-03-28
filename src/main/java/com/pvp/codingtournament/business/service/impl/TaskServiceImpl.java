@@ -5,6 +5,7 @@ import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.TaskEntity;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.TaskService;
+import com.pvp.codingtournament.handler.exception.CodeCompilationException;
 import com.pvp.codingtournament.handler.exception.TaskNotFoundException;
 import com.pvp.codingtournament.mapper.TaskMapStruct;
 import com.pvp.codingtournament.model.AnalysisResults;
@@ -18,8 +19,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,21 +51,12 @@ public class TaskServiceImpl implements TaskService {
 
         TaskEntity taskEntity = optionalTaskEntity.get();
         File codeFile = createSubmittedCodeJavaFile(code);
-        String filePath = codeFile.getAbsolutePath();
-
-        compileSubmittedCodeJavaFile(filePath);
-        codeFile.delete();
-
-        filePath = filePath.replace("\\" + codeFile.getName(), "");
-
+        String filePath = compileSubmittedCodeJavaFile(codeFile);
         int testCasesPassed = runSubmittedCodeTestCases(taskEntity, filePath);
 
-        AnalysisResults analysisResults = new AnalysisResults();
-        analysisResults.setPassed(testCasesPassed == taskEntity.getInputOutput().size());
-        analysisResults.setPassedTestCases(testCasesPassed);
-        analysisResults.setTotalTestCases(taskEntity.getInputOutput().size());
-
-        return analysisResults;
+        return new AnalysisResults(testCasesPassed == taskEntity.getInputOutput().size(),
+                                                                taskEntity.getInputOutput().size(),
+                                                                testCasesPassed);
     }
 
     private File createSubmittedCodeJavaFile(String code) throws IOException {
@@ -73,12 +67,30 @@ public class TaskServiceImpl implements TaskService {
         return codeFile;
     }
 
-    private void compileSubmittedCodeJavaFile(String filePath) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder("javac", filePath);
-        Process process = processBuilder.start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        int exitCode = process.waitFor();
-        System.out.println("Code compilation process exited with code " + exitCode);
+    private String compileSubmittedCodeJavaFile(File codeFile) throws IOException, InterruptedException {
+        String filePath = codeFile.getAbsolutePath();
+        ProcessBuilder compilationProcessBuilder = new ProcessBuilder("javac", filePath);
+        Process compilationProcess = compilationProcessBuilder.start();
+        int exitCode = compilationProcess.waitFor();
+        codeFile.delete();
+
+        if (exitCode == 1){
+            String error = buildCompilationErrorString(filePath, compilationProcess.errorReader());
+            System.out.println(error);
+            throw new CodeCompilationException(error);
+        }
+
+        return filePath.replace("\\" + codeFile.getName(), "");
+    }
+
+    private String buildCompilationErrorString(String filePath, BufferedReader errorOutputReader) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        while ((line = errorOutputReader.readLine()) != null){
+            stringBuilder.append(line.replace(filePath + ":", ""));
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
     }
 
     private int runSubmittedCodeTestCases(TaskEntity taskEntity, String filePath) throws IOException, InterruptedException {

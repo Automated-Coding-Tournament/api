@@ -1,8 +1,11 @@
 package com.pvp.codingtournament.handler;
 
+import com.pvp.codingtournament.handler.exception.CodeCompilationException;
 import com.pvp.codingtournament.handler.exception.CustomException;
 import com.pvp.codingtournament.handler.exception.TaskNotFoundException;
 import com.pvp.codingtournament.handler.exception.UserNotFoundException;
+import org.flywaydb.core.internal.util.JsonUtils;
+import org.mapstruct.ap.shaded.freemarker.template.utility.StringUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,5 +31,11 @@ public class CustomExceptionHandler {
     protected ResponseEntity<ErrorModel> handleTaskNotFoundException(Exception ex, HttpServletRequest request){
         ErrorModel errorModel = new ErrorModel(HttpStatus.NOT_FOUND, "Task is not found");
         return new ResponseEntity<>(errorModel, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CodeCompilationException.class)
+    protected ResponseEntity<ErrorModel> handleCodeCompilationException(CodeCompilationException ex, HttpServletRequest request){
+        ErrorModel errorModel = new ErrorModel(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+        return new ResponseEntity<>(errorModel, HttpStatus.NOT_ACCEPTABLE);
     }
 }
