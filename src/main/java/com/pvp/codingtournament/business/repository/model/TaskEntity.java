@@ -2,12 +2,9 @@ package com.pvp.codingtournament.business.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.javatuples.Tuple;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -41,6 +37,18 @@ public class TaskEntity {
 
     @Column(name =  "points")
     private int points;
+
+    @Column(name = "methodName")
+    private String methodName;
+
+    @Column(name = "methodArguments")
+    private ArrayList<String> methodArguments;
+
+    @Column(name = "methodArgumentTypes")
+    private ArrayList<String> methodArgumentTypes;
+
+    @Column(name = "returnType")
+    private String returnType;
 
     @Column(name = "input_output")
     private ArrayList<String[]> inputOutput;

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,11 @@ public class TaskController {
     @PostMapping("/create")
     public ResponseEntity<TaskDto> createTask(@RequestBody  TaskDto taskDto){
         return new ResponseEntity<>(taskService.createTask(taskDto), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/getCode/{taskId}")
+    public ResponseEntity<String> getTaskCode(@PathVariable("taskId") Long taskId){
+        return ResponseEntity.ok(taskService.buildTaskCode(taskId));
     }
 
     @ApiOperation("Analyzes and runs user submitted code for task")

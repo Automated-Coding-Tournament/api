@@ -5,12 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.javatuples.Tuple;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.ArrayList;
 
 @ApiModel(description = "Task data transfer object")
@@ -30,6 +25,18 @@ public class TaskDto {
 
     @ApiModelProperty(value = "Points given to the user if task is done", example = "5")
     private int points;
+
+    @ApiModelProperty(value = "method name of the task solution", example = "sort")
+    private String methodName;
+
+    @ApiModelProperty(value = "list of method argument names", example = "numbersArray")
+    private ArrayList<String> methodArguments;
+
+    @ApiModelProperty(value = "list of method argument types", example = "int[]")
+    private ArrayList<String> methodArgumentTypes;
+
+    @ApiModelProperty(value = "return type of the solution method", example = "int[]")
+    private String returnType;
 
     @ApiModelProperty(value = "Collection of arrays where 0 index is the input and 1 index is corresponding output")
     private ArrayList<String[]> inputOutput;

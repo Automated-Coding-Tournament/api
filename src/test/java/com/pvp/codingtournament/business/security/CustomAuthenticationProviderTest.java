@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,7 @@ class CustomAuthenticationProviderTest {
                 "+37065555555",
                 0,
                 "Beginner",
-                RoleEnum.ROLE_USER);
+                RoleEnum.ROLE_USER, Collections.emptySet());
         userEntity.setPassword(encoder.encode(userEntity.getPassword()));
     }
 

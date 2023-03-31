@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/login", "/user/register", "/swagger-ui/").permitAll()
                 .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/task/create").hasAnyRole("SPONSOR", "ADMIN")
+                //.antMatchers("/task/create").hasAnyRole("SPONSOR", "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
