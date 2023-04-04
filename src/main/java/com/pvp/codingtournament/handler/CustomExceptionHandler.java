@@ -4,8 +4,6 @@ import com.pvp.codingtournament.handler.exception.CodeCompilationException;
 import com.pvp.codingtournament.handler.exception.CustomException;
 import com.pvp.codingtournament.handler.exception.TaskNotFoundException;
 import com.pvp.codingtournament.handler.exception.UserNotFoundException;
-import org.flywaydb.core.internal.util.JsonUtils;
-import org.mapstruct.ap.shaded.freemarker.template.utility.StringUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -9,7 +9,6 @@ import com.pvp.codingtournament.business.utils.BaseTaskCodeBuilder;
 import com.pvp.codingtournament.business.utils.CodeRunner;
 import com.pvp.codingtournament.business.utils.impl.BaseTaskCodeBuilderImpl;
 import com.pvp.codingtournament.business.utils.impl.CodeRunnerImpl;
-import com.pvp.codingtournament.handler.exception.CodeCompilationException;
 import com.pvp.codingtournament.handler.exception.TaskNotFoundException;
 import com.pvp.codingtournament.mapper.TaskMapStruct;
 import com.pvp.codingtournament.model.AnalysisResults;
@@ -18,12 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service

@@ -16,8 +16,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +35,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/login", "/user/register", "/swagger-ui/").permitAll()
                 .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                //.antMatchers("/task/create").hasAnyRole("SPONSOR", "ADMIN")
+                .antMatchers("/task/create").hasAnyRole("SPONSOR", "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

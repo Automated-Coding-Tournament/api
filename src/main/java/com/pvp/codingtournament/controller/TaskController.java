@@ -1,6 +1,5 @@
 package com.pvp.codingtournament.controller;
 
-import com.pvp.codingtournament.business.repository.model.TaskEntity;
 import com.pvp.codingtournament.business.service.TaskService;
 import com.pvp.codingtournament.model.AnalysisResults;
 import com.pvp.codingtournament.model.TaskDto;
