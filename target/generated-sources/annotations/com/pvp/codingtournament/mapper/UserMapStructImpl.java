@@ -2,12 +2,12 @@ package com.pvp.codingtournament.mapper;
 
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.model.UserDto;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-21T22:24:00+0200",
+    date = "2023-03-31T12:41:20+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 18.0.1.1 (Oracle Corporation)"
 )
 @Component
