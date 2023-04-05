@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CodeRunnerImpl implements CodeRunner {
     private String code;
@@ -31,7 +33,7 @@ public class CodeRunnerImpl implements CodeRunner {
     @Override
     public AnalysisResults runCode() throws IOException, InterruptedException {
         File codeFile = createSubmittedCodeJavaFile(code);
-        String filePath = compileSubmittedCodeJavaFile(codeFile);
+        String filePath = compileAndDeleteSubmittedCodeJavaFile(codeFile);
         int testCasesPassed = runSubmittedCodeTestCases(inputsAndOutputs, filePath);
         return new AnalysisResults(testCasesPassed == inputsAndOutputs.size(),
                 inputsAndOutputs.size(),
@@ -47,7 +49,7 @@ public class CodeRunnerImpl implements CodeRunner {
         return codeFile;
     }
 
-    private String compileSubmittedCodeJavaFile(File codeFile) throws IOException, InterruptedException {
+    private String compileAndDeleteSubmittedCodeJavaFile(File codeFile) throws IOException, InterruptedException {
         String filePath = codeFile.getAbsolutePath();
         ProcessBuilder compilationProcessBuilder = new ProcessBuilder("javac", filePath);
         Process compilationProcess = compilationProcessBuilder.start();
@@ -77,14 +79,17 @@ public class CodeRunnerImpl implements CodeRunner {
         int testCasesPassed = 0;
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String className = "Solution" + username;
+
         for (int i = 0; i < inputsAndOutputs.size(); i++) {
             String input = inputsAndOutputs.get(i)[0];
+            String[] inputArray = input.split(";");
             String output = inputsAndOutputs.get(i)[1];
-            ProcessBuilder codeRunnerBuilder = new ProcessBuilder("java", "-cp", filePath, className, input);
+            List<String> command = buildProcessCommand(filePath, className, inputArray);
+            ProcessBuilder codeRunnerBuilder = new ProcessBuilder(command);
             Process codeRunner = codeRunnerBuilder.start();
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(codeRunner.getInputStream()));
             String resultLine;
-
             while ((resultLine = reader.readLine()) != null) {
                 if (resultLine.equals(output)) {
                     testCasesPassed++;
@@ -92,7 +97,18 @@ public class CodeRunnerImpl implements CodeRunner {
             }
             codeRunner.waitFor();
         }
+
         Files.delete(Path.of(filePath + "\\" + className + ".class"));
         return testCasesPassed;
+    }
+
+    private List<String> buildProcessCommand(String filePath, String className, String[] inputArray) {
+        List<String> command = new ArrayList<>();
+        command.add("java");
+        command.add("-cp");
+        command.add(filePath);
+        command.add(className);
+        command.addAll(Arrays.asList(inputArray));
+        return command;
     }
 }

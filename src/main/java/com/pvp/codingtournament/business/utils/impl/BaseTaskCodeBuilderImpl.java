@@ -11,6 +11,7 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
     private String returnType = "returnTypePlaceholder";
     private ArrayList<String> methodArguments = new ArrayList<>();
     private ArrayList<String> methodArgumentTypes = new ArrayList<>();
+    private ArrayList<String> imports = new ArrayList<>();
 
     @Override
     public void setMethodName(String methodName) {
@@ -37,12 +38,15 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String baseCode = Constants.taskBaseCode;
         String className = "Solution";
+
         baseCode = baseCode.replaceAll("classNamePlaceholder", className + username);
         baseCode = baseCode.replaceAll("methodNamePlaceholder", methodName);
         baseCode = baseCode.replaceAll("returnTypePlaceholder", returnType);
-
         baseCode = baseCode.replaceAll("methodArgumentPlaceholder", buildMethodArguments(methodArguments, methodArgumentTypes));
         baseCode = baseCode.replaceAll("inputPlaceholder", buildMethodInputs(methodArgumentTypes));
+        baseCode = addImportStatements(baseCode);
+        baseCode = addToStringMethodIfReturnTypeArray(baseCode);
+
         return baseCode;
     }
 
@@ -64,10 +68,37 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
                 case "int" -> methodInputBuilder.append(String.format("Integer.parseInt(args[%d]), ", i));
                 case "double" -> methodInputBuilder.append(String.format("Double.parseDouble(args[%d]), ", i));
                 case "string" -> methodInputBuilder.append(String.format("args[%d], ", i));
+                case "int[]" -> {
+                    methodInputBuilder.append(String.format("Arrays.stream(args[%d].replaceAll(\"\\\\\\\\[|\\\\\\\\]\", \"\").split(\", \"))" +
+                                                            ".mapToInt(Integer::parseInt)" +
+                                                            ".toArray(), ", i));
+                    if (!imports.contains("import java.util.Arrays;"))
+                        imports.add("import java.util.Arrays;");
+                }
             }
         }
         String methodInputs = methodInputBuilder.toString();
         methodInputs = methodInputs.substring(0, methodInputs.length() - 2);
         return methodInputs;
+    }
+
+    private String addImportStatements(String baseCode) {
+        StringBuilder baseCodeBuilder = new StringBuilder(baseCode);
+        for (String importStatement : imports) {
+            baseCodeBuilder.insert(0, importStatement + "\n");
+        }
+        baseCode = baseCodeBuilder.toString();
+        return baseCode;
+    }
+
+    private String addToStringMethodIfReturnTypeArray(String baseCode) {
+        if (returnType.contains("[]")){
+            int methodNameIndex = baseCode.indexOf(methodName);
+            baseCode = baseCode.substring(0, methodNameIndex) + "Arrays.toString(" + baseCode.substring(methodNameIndex);
+            int soutIndex = baseCode.indexOf("System.out.println");
+            int endOfSoutLineIndex = baseCode.indexOf(";", soutIndex);
+            baseCode = baseCode.substring(0, endOfSoutLineIndex) + ")" + baseCode.substring(endOfSoutLineIndex);
+        }
+        return baseCode;
     }
 }
