@@ -8,6 +8,6 @@ import java.io.IOException;
 public interface TaskService {
 
     public TaskDto createTask(TaskDto taskDto);
-    public AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException;
+    public AnalysisResults analyzeJavaCode(Long taskId, String code) throws IOException, InterruptedException;
     String buildTaskCode(Long taskId);
 }

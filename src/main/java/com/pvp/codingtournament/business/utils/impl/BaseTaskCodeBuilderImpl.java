@@ -36,7 +36,7 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
     @Override
     public String build() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String baseCode = Constants.taskBaseCode;
+        String baseCode = Constants.javaTaskBaseCode;
         String className = "Solution";
 
         baseCode = baseCode.replaceAll("classNamePlaceholder", className + username);
@@ -65,11 +65,11 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
         for (int i = 0; i < methodInput.size(); i++) {
             String inputType = methodInput.get(i);
             switch (inputType.toLowerCase()) {
-                case "int" -> methodInputBuilder.append(String.format("Integer.parseInt(args[%d]), ", i));
-                case "double" -> methodInputBuilder.append(String.format("Double.parseDouble(args[%d]), ", i));
-                case "string" -> methodInputBuilder.append(String.format("args[%d], ", i));
+                case "int" -> methodInputBuilder.append(String.format("Integer.parseInt(arguments[%d]), ", i));
+                case "double" -> methodInputBuilder.append(String.format("Double.parseDouble(arguments[%d]), ", i));
+                case "string" -> methodInputBuilder.append(String.format("arguments[%d], ", i));
                 case "int[]" -> {
-                    methodInputBuilder.append(String.format("Arrays.stream(args[%d].replaceAll(\"\\\\\\\\[|\\\\\\\\]\", \"\").split(\", \"))" +
+                    methodInputBuilder.append(String.format("Arrays.stream(arguments[%d].replaceAll(\"\\\\\\\\[|\\\\\\\\]\", \"\").split(\", \"))" +
                                                             ".mapToInt(Integer::parseInt)" +
                                                             ".toArray(), ", i));
                     if (!imports.contains("import java.util.Arrays;"))
@@ -84,6 +84,7 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
 
     private String addImportStatements(String baseCode) {
         StringBuilder baseCodeBuilder = new StringBuilder(baseCode);
+        baseCodeBuilder.insert(0, "import java.util.Scanner;" + "\n");
         for (String importStatement : imports) {
             baseCodeBuilder.insert(0, importStatement + "\n");
         }

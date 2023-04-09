@@ -27,6 +27,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TaskMapStruct taskMapper;
+    private final CodeRunner codeRunner;
 
     @Override
     public TaskDto createTask(TaskDto taskDto) {
@@ -53,14 +54,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException {
+    public AnalysisResults analyzeJavaCode(Long taskId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (!optionalTaskEntity.isPresent()) {
             throw new TaskNotFoundException();
         }
-        CodeRunner codeRunner = new CodeRunnerImpl();
         codeRunner.setCode(code);
         codeRunner.setInputsAndOutputs(optionalTaskEntity.get().getInputOutput());
-       return codeRunner.runCode();
+        return codeRunner.runCode("java");
     }
 }

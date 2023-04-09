@@ -17,4 +17,8 @@ public class AnalysisResults {
     private int totalTestCases;
     @ApiModelProperty(value = "Amount of passed test cases of the task", example = "3")
     private int passedTestCases;
+    @ApiModelProperty(value = "Amount of memory the code takes up", example = "35498")
+    private int memoryInKilobytes;
+    @ApiModelProperty(value = "Average cpu time taken for all test cases", example = "12.5")
+    private double averageCpuTime;
 }

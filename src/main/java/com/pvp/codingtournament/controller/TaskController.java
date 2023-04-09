@@ -39,13 +39,13 @@ public class TaskController {
         return ResponseEntity.ok(taskService.buildTaskCode(taskId));
     }
 
-    @ApiOperation("Analyzes and runs user submitted code for task")
+    @ApiOperation("Analyzes and runs user submitted java code for task")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Task not found"),
             @ApiResponse(code = 200, message = "Analysis successful")
     })
-    @PostMapping("/submitSolution/{taskId}")
-    public ResponseEntity<AnalysisResults> submitTaskSolution(@PathVariable("taskId") Long taskId, @RequestBody String code) throws IOException, InterruptedException {
-        return ResponseEntity.ok(taskService.analyzeCode(taskId, code));
+    @PostMapping("/submitSolution/java/{taskId}")
+    public ResponseEntity<AnalysisResults> submitJavaTaskSolution(@PathVariable("taskId") Long taskId, @RequestBody String code) throws IOException, InterruptedException {
+        return ResponseEntity.ok(taskService.analyzeJavaCode(taskId, code));
     }
 }
