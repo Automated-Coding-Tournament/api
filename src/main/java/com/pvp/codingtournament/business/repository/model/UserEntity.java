@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -23,7 +24,6 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class UserEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -59,5 +59,13 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private Set<TaskEntity> tasks;
+    private Set<TaskEntity> createdTasks;
+
+    @OneToMany(mappedBy = "creatorUser")
+    @JsonManagedReference
+    private Set<TournamentEntity> createdTournaments;
+
+    @ManyToMany(mappedBy = "registeredUsers")
+    @JsonManagedReference
+    private Set<TournamentEntity> attendingTournaments;
 }

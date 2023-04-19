@@ -49,7 +49,7 @@ class CustomAuthenticationProviderTest {
                 "+37065555555",
                 0,
                 "Beginner",
-                RoleEnum.ROLE_USER, Collections.emptySet());
+                RoleEnum.ROLE_USER, Collections.emptySet(),  Collections.emptySet(),  Collections.emptySet());
         userEntity.setPassword(encoder.encode(userEntity.getPassword()));
     }
 

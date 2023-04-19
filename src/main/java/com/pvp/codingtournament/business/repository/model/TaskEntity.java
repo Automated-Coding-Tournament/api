@@ -12,9 +12,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,7 +25,6 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "task")
 public class TaskEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name  = "task_id")
@@ -57,4 +58,7 @@ public class TaskEntity {
     @JoinColumn(name="user_id")
     @JsonBackReference
     private UserEntity user;
+
+    @ManyToMany(mappedBy = "tournamentTasks")
+    private Set<TournamentEntity> tournaments;
 }

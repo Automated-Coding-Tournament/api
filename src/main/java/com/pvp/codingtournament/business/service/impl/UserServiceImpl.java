@@ -8,7 +8,7 @@ import com.pvp.codingtournament.handler.Error;
 import com.pvp.codingtournament.handler.ErrorModel;
 import com.pvp.codingtournament.handler.exception.CustomException;
 import com.pvp.codingtournament.handler.exception.UserNotFoundException;
-import com.pvp.codingtournament.mapper.UserMapStruct;
+import com.pvp.codingtournament.business.mapper.UserMapStruct;
 import com.pvp.codingtournament.model.UserDto;
 import com.pvp.codingtournament.model.UserEditDto;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
         if (!optionalUserEntity.isPresent()){
             throw new UserNotFoundException();
         }
-
         UserEntity userEntity = optionalUserEntity.get();
         userEntity.setName(user.getName());
         userEntity.setSurname(user.getSurname());
