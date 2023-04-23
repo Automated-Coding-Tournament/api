@@ -40,4 +40,7 @@ public class TaskDto {
 
     @ApiModelProperty(value = "Collection of arrays where 0 index is the input and 1 index is corresponding output")
     private ArrayList<String[]> inputOutput;
+
+    @ApiModelProperty(value = "Task language")
+    private String language;
 }

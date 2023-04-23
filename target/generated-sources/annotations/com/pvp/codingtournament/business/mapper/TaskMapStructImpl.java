@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-23T13:29:00+0300",
+    date = "2023-04-23T15:19:42+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Oracle Corporation)"
 )
 @Component
@@ -40,6 +40,7 @@ public class TaskMapStructImpl implements TaskMapStruct {
         if ( arrayList2 != null ) {
             taskDto.setInputOutput( new ArrayList<String[]>( arrayList2 ) );
         }
+        taskDto.setLanguage( entity.getLanguage() );
 
         return taskDto;
     }
@@ -70,6 +71,7 @@ public class TaskMapStructImpl implements TaskMapStruct {
         if ( arrayList2 != null ) {
             taskEntity.setInputOutput( new ArrayList<String[]>( arrayList2 ) );
         }
+        taskEntity.setLanguage( dto.getLanguage() );
 
         return taskEntity;
     }

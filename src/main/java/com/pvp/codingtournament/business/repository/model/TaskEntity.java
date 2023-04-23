@@ -54,6 +54,9 @@ public class TaskEntity {
     @Column(name = "input_output")
     private ArrayList<String[]> inputOutput;
 
+    @Column(name = "language")
+    private String language;
+
     @ManyToOne
     @JoinColumn(name="user_id")
     @JsonBackReference

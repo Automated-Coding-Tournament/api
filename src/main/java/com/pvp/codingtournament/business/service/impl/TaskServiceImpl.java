@@ -75,13 +75,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public AnalysisResults analyzeJavaCode(Long taskId, String code) throws IOException, InterruptedException {
+    public AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (!optionalTaskEntity.isPresent()) {
             throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
         }
+        TaskEntity taskEntity = optionalTaskEntity.get();
         codeRunner.setCode(code);
-        codeRunner.setInputsAndOutputs(optionalTaskEntity.get().getInputOutput());
-        return codeRunner.runCode("java");
+        codeRunner.setInputsAndOutputs(taskEntity.getInputOutput());
+        return codeRunner.runCode(taskEntity.getLanguage());
     }
 }
