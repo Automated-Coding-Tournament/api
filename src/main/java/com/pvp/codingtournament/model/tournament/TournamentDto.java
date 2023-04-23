@@ -1,7 +1,8 @@
-package com.pvp.codingtournament.model;
+package com.pvp.codingtournament.model.tournament;
 
 import com.pvp.codingtournament.business.enums.Difficulty;
 import com.pvp.codingtournament.business.enums.TournamentStatus;
+import com.pvp.codingtournament.model.UserDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

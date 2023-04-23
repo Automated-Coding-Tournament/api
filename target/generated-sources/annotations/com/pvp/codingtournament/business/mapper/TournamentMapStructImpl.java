@@ -2,14 +2,15 @@ package com.pvp.codingtournament.business.mapper;
 
 import com.pvp.codingtournament.business.repository.model.TournamentEntity;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
-import com.pvp.codingtournament.model.TournamentDto;
 import com.pvp.codingtournament.model.UserDto;
+import com.pvp.codingtournament.model.tournament.TournamentCreationDto;
+import com.pvp.codingtournament.model.tournament.TournamentDto;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-19T20:07:58+0300",
+    date = "2023-04-23T13:28:59+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Oracle Corporation)"
 )
 @Component
@@ -59,6 +60,26 @@ public class TournamentMapStructImpl implements TournamentMapStruct {
         tournamentDto.setStatus( entity.getStatus() );
 
         return tournamentDto;
+    }
+
+    @Override
+    public TournamentEntity creationDtoToEntity(TournamentCreationDto creationDto) {
+        if ( creationDto == null ) {
+            return null;
+        }
+
+        TournamentEntity tournamentEntity = new TournamentEntity();
+
+        tournamentEntity.setName( creationDto.getName() );
+        tournamentEntity.setStartDate( creationDto.getStartDate() );
+        tournamentEntity.setEndDate( creationDto.getEndDate() );
+        tournamentEntity.setDescription( creationDto.getDescription() );
+        tournamentEntity.setFirstPlacePoints( creationDto.getFirstPlacePoints() );
+        tournamentEntity.setSecondPlacePoints( creationDto.getSecondPlacePoints() );
+        tournamentEntity.setThirdPlacePoints( creationDto.getThirdPlacePoints() );
+        tournamentEntity.setDifficulty( creationDto.getDifficulty() );
+
+        return tournamentEntity;
     }
 
     protected UserEntity userDtoToUserEntity(UserDto userDto) {

@@ -1,14 +1,14 @@
 package com.pvp.codingtournament.business.mapper;
 
 import com.pvp.codingtournament.business.repository.model.TaskEntity;
-import com.pvp.codingtournament.model.TaskDto;
+import com.pvp.codingtournament.model.task.TaskDto;
 import java.util.ArrayList;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-19T19:50:47+0300",
+    date = "2023-04-23T13:29:00+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Oracle Corporation)"
 )
 @Component

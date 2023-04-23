@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
@@ -19,16 +20,16 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(ex.getErrorModel(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<ErrorModel> handleUserNotFoundException(Exception ex, HttpServletRequest request){
-        ErrorModel errorModel = new ErrorModel(HttpStatus.NOT_FOUND, "User is not found");
+    @ExceptionHandler(NoSuchElementException.class)
+    protected ResponseEntity<ErrorModel> handleNoSuchElementException(NoSuchElementException ex, HttpServletRequest request){
+        ErrorModel errorModel = new ErrorModel(HttpStatus.NOT_FOUND, ex.getMessage());
         return new ResponseEntity<>(errorModel, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(TaskNotFoundException.class)
-    protected ResponseEntity<ErrorModel> handleTaskNotFoundException(Exception ex, HttpServletRequest request){
-        ErrorModel errorModel = new ErrorModel(HttpStatus.NOT_FOUND, "Task is not found");
-        return new ResponseEntity<>(errorModel, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(SecurityException.class)
+    protected ResponseEntity<ErrorModel> handleSecurityException(SecurityException ex, HttpServletRequest request){
+        ErrorModel errorModel = new ErrorModel(HttpStatus.FORBIDDEN, ex.getMessage());
+        return new ResponseEntity<>(errorModel, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(CodeCompilationException.class)

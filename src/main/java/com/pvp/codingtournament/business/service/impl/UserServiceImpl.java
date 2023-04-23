@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -59,8 +60,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto editUser(String username, UserEditDto user) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
-        if (!optionalUserEntity.isPresent()){
-            throw new UserNotFoundException();
+        if (optionalUserEntity.isEmpty()){
+            throw new NoSuchElementException("User with username: " + username + " does not exist");
         }
         UserEntity userEntity = optionalUserEntity.get();
         userEntity.setName(user.getName());
@@ -74,8 +75,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUser(String username) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
-        if (!optionalUserEntity.isPresent()){
-            throw new UserNotFoundException();
+        if (optionalUserEntity.isEmpty()){
+            throw new NoSuchElementException("User with username: " + username + " does not exist");
         }
         return userMapper.entityToDto(optionalUserEntity.get());
     }

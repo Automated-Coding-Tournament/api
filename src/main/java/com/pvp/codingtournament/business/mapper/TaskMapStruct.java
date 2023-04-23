@@ -1,7 +1,7 @@
 package com.pvp.codingtournament.business.mapper;
 
 import com.pvp.codingtournament.business.repository.model.TaskEntity;
-import com.pvp.codingtournament.model.TaskDto;
+import com.pvp.codingtournament.model.task.TaskDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

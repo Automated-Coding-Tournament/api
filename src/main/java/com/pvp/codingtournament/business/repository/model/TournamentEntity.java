@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,15 +62,19 @@ public class TournamentEntity {
     @JoinColumn(name = "creator_user_id")
     private UserEntity creatorUser;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.REMOVE})
     @JoinTable(name = "user_tournament",
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             joinColumns = @JoinColumn(name = "tournament_id", referencedColumnName = "tournament_id"))
     private Set<UserEntity> registeredUsers;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.REMOVE})
     @JoinTable(name = "tournament_task",
             inverseJoinColumns = @JoinColumn(name = "task_id", referencedColumnName = "task_id"),
             joinColumns = @JoinColumn(name = "tournament_id", referencedColumnName = "tournament_id"))
     private Set<TaskEntity> tournamentTasks;
+
+    public void addTask(TaskEntity task){
+        this.tournamentTasks.add(task);
+    }
 }

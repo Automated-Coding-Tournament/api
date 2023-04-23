@@ -1,4 +1,4 @@
-package com.pvp.codingtournament.model;
+package com.pvp.codingtournament.model.task;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

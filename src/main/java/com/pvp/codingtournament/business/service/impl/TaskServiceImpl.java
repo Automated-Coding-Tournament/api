@@ -8,15 +8,15 @@ import com.pvp.codingtournament.business.service.TaskService;
 import com.pvp.codingtournament.business.utils.BaseTaskCodeBuilder;
 import com.pvp.codingtournament.business.utils.CodeRunner;
 import com.pvp.codingtournament.business.utils.impl.BaseTaskCodeBuilderImpl;
-import com.pvp.codingtournament.handler.exception.TaskNotFoundException;
 import com.pvp.codingtournament.business.mapper.TaskMapStruct;
 import com.pvp.codingtournament.model.AnalysisResults;
-import com.pvp.codingtournament.model.TaskDto;
+import com.pvp.codingtournament.model.task.TaskDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -38,10 +38,32 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public TaskDto editTask(Long taskId, TaskDto taskDto) {
+        Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
+        if (optionalTaskEntity.isEmpty()){
+            throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
+        }
+
+        TaskEntity taskEntity = optionalTaskEntity.get();
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!taskEntity.getUser().getUsername().equals(username)){
+            throw new SecurityException("Only the task creator can edit this task");
+        }
+
+        TaskEntity editedTaskEntity = taskMapper.dtoToEntity(taskDto);
+        editedTaskEntity.setId(taskEntity.getId());
+        editedTaskEntity.setTournaments(taskEntity.getTournaments());
+        editedTaskEntity.setUser(taskEntity.getUser());
+
+        return taskMapper.entityToDto(taskRepository.save(editedTaskEntity));
+    }
+
+    @Override
     public String buildTaskCode(Long taskId) {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
-        if (!optionalTaskEntity.isPresent()) {
-            throw new TaskNotFoundException();
+        if (optionalTaskEntity.isEmpty()) {
+            throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
         }
         TaskEntity taskEntity = optionalTaskEntity.get();
         BaseTaskCodeBuilder baseTaskCodeBuilder = new BaseTaskCodeBuilderImpl();
@@ -56,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
     public AnalysisResults analyzeJavaCode(Long taskId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (!optionalTaskEntity.isPresent()) {
-            throw new TaskNotFoundException();
+            throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
         }
         codeRunner.setCode(code);
         codeRunner.setInputsAndOutputs(optionalTaskEntity.get().getInputOutput());
