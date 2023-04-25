@@ -75,6 +75,18 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
                     if (!imports.contains("import java.util.Arrays;"))
                         imports.add("import java.util.Arrays;");
                 }
+                case "double[]" -> {
+                    methodInputBuilder.append(String.format("Arrays.stream(arguments[%d].replaceAll(\"\\\\\\\\[|\\\\\\\\]\", \"\").split(\", \"))" +
+                            ".mapToDouble(Double::parseDouble)" +
+                            ".toArray(), ", i));
+                    if (!imports.contains("import java.util.Arrays;"))
+                        imports.add("import java.util.Arrays;");
+                }
+                case "string[]" -> {
+                    methodInputBuilder.append(String.format("arguments[%d].replaceAll(\"\\\\\\\\[|\\\\\\\\]\", \"\").split(\", \"), ", i));
+                    if (!imports.contains("import java.util.Arrays;"))
+                        imports.add("import java.util.Arrays;");
+                }
             }
         }
         String methodInputs = methodInputBuilder.toString();
