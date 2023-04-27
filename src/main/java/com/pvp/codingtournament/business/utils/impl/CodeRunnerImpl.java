@@ -68,6 +68,7 @@ public class CodeRunnerImpl implements CodeRunner {
             String[] outputInParts = resultsJson.getString("output").split(":");
             outputInParts = Arrays.copyOfRange(outputInParts, 1, outputInParts.length);
             StringBuilder output = new StringBuilder();
+            output.append("Line");
             for (String part : outputInParts) {
                 output.append(":").append(part);
             }
