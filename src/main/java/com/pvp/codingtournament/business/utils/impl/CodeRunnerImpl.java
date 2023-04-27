@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -64,8 +65,13 @@ public class CodeRunnerImpl implements CodeRunner {
 
     private void validateOutput(JSONObject resultsJson) {
         if (resultsJson.getString("output").contains("error")){
-            System.out.println(resultsJson.getString("output"));
-            throw new CodeCompilationException(resultsJson.getString("output"));
+            String[] outputInParts = resultsJson.getString("output").split(":");
+            outputInParts = Arrays.copyOfRange(outputInParts, 1, outputInParts.length);
+            StringBuilder output = new StringBuilder();
+            for (String part : outputInParts) {
+                output.append(":").append(part);
+            }
+            throw new CodeCompilationException(output.toString());
         }
     }
 }
