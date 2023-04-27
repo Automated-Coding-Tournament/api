@@ -5,13 +5,37 @@ import com.pvp.codingtournament.business.utils.BaseTaskCodeBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
+    private final Map<String, String> javaVariableTypes;
+    private final Map<String, String> cSharpVariableTypes;
     private String methodName = "methodNamePlaceholder";
     private String returnType = "returnTypePlaceholder";
+    private String language = "java";
     private ArrayList<String> methodArguments = new ArrayList<>();
     private ArrayList<String> methodArgumentTypes = new ArrayList<>();
     private ArrayList<String> imports = new ArrayList<>();
+
+    public BaseTaskCodeBuilderImpl(){
+        javaVariableTypes = new HashMap<>();
+        javaVariableTypes.put("int", "int");
+        javaVariableTypes.put("double", "double");
+        javaVariableTypes.put("string", "String");
+        javaVariableTypes.put("int[]", "int[]");
+        javaVariableTypes.put("double[]", "double");
+        javaVariableTypes.put("string[]", "String[]");
+
+        cSharpVariableTypes = new HashMap<>();
+        cSharpVariableTypes.put("int", "int");
+        cSharpVariableTypes.put("double", "double");
+        cSharpVariableTypes.put("string", "string");
+        cSharpVariableTypes.put("int[]", "int[]");
+        cSharpVariableTypes.put("double[]", "double");
+        cSharpVariableTypes.put("string[]", "string[]");
+    }
 
     @Override
     public void setMethodName(String methodName) {
@@ -34,6 +58,11 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
     }
 
     @Override
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    @Override
     public String build() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String baseCode = Constants.javaTaskBaseCode;
@@ -51,6 +80,7 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
     }
 
     private String buildMethodArguments(ArrayList<String> methodArguments, ArrayList<String> methodArgumentTypes) {
+        methodArgumentTypes = adaptMethodArgumentTypesToLanguage(methodArgumentTypes);
         StringBuilder methodArgumentBuilder = new StringBuilder();
         for (int i = 0; i < methodArguments.size(); i++) {
             methodArgumentBuilder.append(String.format("%s %s, ", methodArgumentTypes.get(i), methodArguments.get(i)));
@@ -58,6 +88,16 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
         String arguments = methodArgumentBuilder.toString();
         arguments = arguments.substring(0, arguments.length() - 2);
         return arguments;
+    }
+
+    private ArrayList<String> adaptMethodArgumentTypesToLanguage(ArrayList<String> methodArgumentTypes) {
+        switch (language) {
+            case "java" ->
+                    methodArgumentTypes = (ArrayList<String>) methodArgumentTypes.stream().map(type -> javaVariableTypes.get(type.toLowerCase())).collect(Collectors.toList());
+            case "c#" ->
+                    methodArgumentTypes = (ArrayList<String>) methodArgumentTypes.stream().map(type -> cSharpVariableTypes.get(type.toLowerCase())).collect(Collectors.toList());
+        }
+        return methodArgumentTypes;
     }
 
     private String buildMethodInputs(ArrayList<String> methodInput) {

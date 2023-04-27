@@ -71,6 +71,7 @@ public class TaskServiceImpl implements TaskService {
         baseTaskCodeBuilder.setMethodArgumentTypes(taskEntity.getMethodArgumentTypes());
         baseTaskCodeBuilder.setMethodArguments(taskEntity.getMethodArguments());
         baseTaskCodeBuilder.setReturnType(taskEntity.getReturnType());
+        baseTaskCodeBuilder.setLanguage(taskEntity.getLanguage());
         return baseTaskCodeBuilder.build();
     }
 
