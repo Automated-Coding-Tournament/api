@@ -11,4 +11,6 @@ public interface TaskService {
     TaskDto editTask(Long taskId, TaskDto taskDto);
     AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException;
     String buildTaskCode(Long taskId);
+
+    TaskDto getById(Long taskId);
 }

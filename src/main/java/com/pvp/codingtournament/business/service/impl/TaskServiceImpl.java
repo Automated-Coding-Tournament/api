@@ -76,6 +76,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public TaskDto getById(Long taskId) {
+        Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
+        if (optionalTaskEntity.isEmpty()){
+            throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
+        }
+        return taskMapper.entityToDto(optionalTaskEntity.get());
+    }
+
+    @Override
     public AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (!optionalTaskEntity.isPresent()) {

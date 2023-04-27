@@ -51,6 +51,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.buildTaskCode(taskId));
     }
 
+    @GetMapping("/getTask/{id}")
+    public ResponseEntity<TaskDto> getTaskById(@PathVariable("id") Long taskId){
+        return ResponseEntity.ok(taskService.getById(taskId));
+    }
+
     @ApiOperation("Analyzes and runs user submitted code for task")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Task not found"),
