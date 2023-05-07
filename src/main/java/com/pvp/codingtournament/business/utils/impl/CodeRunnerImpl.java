@@ -9,10 +9,8 @@ import org.json.JSONObject;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.NotSupportedException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor

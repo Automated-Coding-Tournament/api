@@ -1,14 +1,13 @@
 package com.pvp.codingtournament.business.service.impl;
 
 import com.pvp.codingtournament.business.enums.RoleEnum;
+import com.pvp.codingtournament.business.mapper.UserMapStruct;
 import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.UserService;
 import com.pvp.codingtournament.handler.Error;
 import com.pvp.codingtournament.handler.ErrorModel;
 import com.pvp.codingtournament.handler.exception.CustomException;
-import com.pvp.codingtournament.handler.exception.UserNotFoundException;
-import com.pvp.codingtournament.business.mapper.UserMapStruct;
 import com.pvp.codingtournament.model.UserDto;
 import com.pvp.codingtournament.model.UserEditDto;
 import lombok.RequiredArgsConstructor;
