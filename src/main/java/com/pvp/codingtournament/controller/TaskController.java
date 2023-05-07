@@ -62,6 +62,12 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
+    @GetMapping("/get/nextTournamentTask/{id}")
+    public ResponseEntity<TaskDto> getNextTournamentTask(@PathVariable("id") Long tournamentId){
+        TaskDto taskDto = taskService.getNextTournamentTask(tournamentId);
+        return taskDto != null ? ResponseEntity.ok(taskDto) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @ApiOperation("Analyzes and runs user submitted code for task")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Task not found"),

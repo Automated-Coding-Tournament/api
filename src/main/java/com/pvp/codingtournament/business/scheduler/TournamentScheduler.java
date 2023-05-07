@@ -4,6 +4,7 @@ import com.pvp.codingtournament.business.enums.TournamentStatus;
 import com.pvp.codingtournament.business.repository.TournamentParticipationRepository;
 import com.pvp.codingtournament.business.repository.TournamentRepository;
 import com.pvp.codingtournament.business.repository.UserRepository;
+import com.pvp.codingtournament.business.repository.model.TaskEntity;
 import com.pvp.codingtournament.business.repository.model.TournamentEntity;
 import com.pvp.codingtournament.business.repository.model.TournamentParticipationEntity;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -39,6 +42,8 @@ public class TournamentScheduler {
                     tournamentParticipationEntity.setAverageMemoryInKilobytes(0);
                     tournamentParticipationEntity.setFinishedParticipating(false);
                     tournamentParticipationEntity.setFinishedCurrentTask(false);
+                    ArrayList<Long> unfinishedTaskIds = (ArrayList<Long>) tournament.getTournamentTasks().stream().map(TaskEntity::getId).collect(Collectors.toList());
+                    tournamentParticipationEntity.setUnfinishedTaskIds(unfinishedTaskIds);
                     tournamentParticipationRepository.save(tournamentParticipationEntity);
                 }
             }
@@ -79,7 +84,8 @@ public class TournamentScheduler {
         });
 
         int[] winningPlacePoints = {tournament.getFirstPlacePoints(), tournament.getSecondPlacePoints(), tournament.getThirdPlacePoints()};
-        for (int i = 0; i < 3; i++){
+        int end = participationRecordList.size() >= 3 ? 3 : participationRecordList.size();
+        for (int i = 0; i < end; i++){
             TournamentParticipationEntity participationRecord = participationRecordList.get(i);
             participationRecord.addPoints(winningPlacePoints[i]);
             tournamentParticipationRepository.save(participationRecord);

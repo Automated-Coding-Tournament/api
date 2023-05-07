@@ -15,5 +15,7 @@ public interface TaskService {
 
     TaskDto getById(Long taskId);
 
+    TaskDto getNextTournamentTask(Long tournamentId);
+
     List<TaskDto> getAllTasks();
 }

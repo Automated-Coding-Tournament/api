@@ -100,23 +100,23 @@ public class TournamentServiceImpl implements TournamentService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
 
-        Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
-        if (optionalUserEntity.isEmpty()){
-            throw new NoSuchElementException("User with username: " + username + " does not exist");
-        }
+//        Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
+//        if (optionalUserEntity.isEmpty()){
+//            throw new NoSuchElementException("User with username: " + username + " does not exist");
+//        }
 
         if (!participationEntity.isFinishedCurrentTask()) {
             participationEntity.deducePoints();
         }
 
-        UserEntity userEntity = optionalUserEntity.get();
-        userEntity.addPoints(participationEntity.getPoints());
+        //UserEntity userEntity = optionalUserEntity.get();
+        //userEntity.addPoints(participationEntity.getPoints());
 
         participationEntity.calculateMemoryAverage();
         participationEntity.setFinishedParticipating(true);
 
         tournamentParticipationRepository.save(participationEntity);
-        userRepository.save(userEntity);
+        //userRepository.save(userEntity);
     }
 
     @Override

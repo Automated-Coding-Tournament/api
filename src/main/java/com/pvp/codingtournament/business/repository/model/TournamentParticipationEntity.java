@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,6 +48,9 @@ public class TournamentParticipationEntity {
     @Column(name = "finished_participating")
     private boolean finishedParticipating;
 
+    @Column(name = "unfinished_task_ids")
+    private ArrayList<Long> unfinishedTaskIds;
+
     @ManyToOne
     @JoinColumn(name = "current_task_id")
     private TaskEntity task;
@@ -73,5 +78,9 @@ public class TournamentParticipationEntity {
         if (completedTaskCount != 0){
             this.averageMemoryInKilobytes /= completedTaskCount;
         }
+    }
+
+    public void removeTaskIdFromUnfinishedTasks(Long taskId) {
+        this.unfinishedTaskIds.remove(taskId);
     }
 }

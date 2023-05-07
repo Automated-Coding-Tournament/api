@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,6 +99,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public TaskDto getNextTournamentTask(Long tournamentId) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
+        List<Long> unfinishedTaskIds = participationEntity.getUnfinishedTaskIds();
+        if (unfinishedTaskIds.isEmpty()){
+            return null;
+        }
+        Random random = new Random();
+        long nextTaskId = random.nextLong(0, unfinishedTaskIds.size());
+        Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(unfinishedTaskIds.get((int) nextTaskId));
+        if (optionalTaskEntity.isEmpty()){
+            throw new NoSuchElementException("Task with id: " + nextTaskId + " does not exist");
+        }
+        TaskEntity taskEntity = optionalTaskEntity.get();
+        return taskMapper.entityToDto(taskEntity);
+    }
+
+    @Override
     public List<TaskDto> getAllTasks() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
@@ -132,6 +151,7 @@ public class TaskServiceImpl implements TaskService {
             tournamentParticipationEntity.incrementCompletedTaskCount();
             tournamentParticipationEntity.addPoints(taskEntity.getPoints());
             tournamentParticipationEntity.addMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
+            tournamentParticipationEntity.removeTaskIdFromUnfinishedTasks(taskId);
             tournamentParticipationRepository.save(tournamentParticipationEntity);
         }
         return analysisResults;

@@ -25,7 +25,7 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
         javaVariableTypes.put("double", "double");
         javaVariableTypes.put("string", "String");
         javaVariableTypes.put("int[]", "int[]");
-        javaVariableTypes.put("double[]", "double");
+        javaVariableTypes.put("double[]", "double[]");
         javaVariableTypes.put("string[]", "String[]");
 
         cSharpVariableTypes = new HashMap<>();
@@ -33,7 +33,7 @@ public class BaseTaskCodeBuilderImpl implements BaseTaskCodeBuilder {
         cSharpVariableTypes.put("double", "double");
         cSharpVariableTypes.put("string", "string");
         cSharpVariableTypes.put("int[]", "int[]");
-        cSharpVariableTypes.put("double[]", "double");
+        cSharpVariableTypes.put("double[]", "double[]");
         cSharpVariableTypes.put("string[]", "string[]");
     }
 
