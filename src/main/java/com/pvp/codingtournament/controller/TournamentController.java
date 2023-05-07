@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +36,22 @@ public class TournamentController {
     @PostMapping("/create")
     public ResponseEntity<TournamentDto> createTournament(@RequestBody TournamentCreationDto tournamentCreationDto, @RequestParam("tasks") List<Long> taskIds){
         return ResponseEntity.ok(tournamentService.createTournament(tournamentCreationDto, taskIds));
+    }
+
+    @PostMapping("/register/{id}")
+    public ResponseEntity<String> registerUserToTournament(@PathVariable("id") Long tournamentId){
+        tournamentService.registerUserToTournament(tournamentId);
+        return ResponseEntity.ok("Registration to tournament successful!");
+    }
+
+    @PostMapping("/finish/{id}")
+    public ResponseEntity<String> finishUserParticipationInTournament(@PathVariable("id") Long tournamentId){
+        tournamentService.finishUserParticipationInTournament(tournamentId);
+        return ResponseEntity.ok("You have successfully cashed out your points!");
+    }
+
+    @PostMapping("/deduce/points/{id}")
+    public ResponseEntity<Integer> deduceUserParticipationPoints(@PathVariable("id") Long tournamentId){
+        return ResponseEntity.ok(tournamentService.deduceUserParticipationPoints(tournamentId));
     }
 }

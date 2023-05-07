@@ -1,10 +1,14 @@
 package com.pvp.codingtournament.business.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pvp.codingtournament.business.enums.Difficulty;
 import com.pvp.codingtournament.business.enums.TournamentStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,9 +24,11 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "tournament")
 public class TournamentEntity {
@@ -60,21 +66,28 @@ public class TournamentEntity {
 
     @ManyToOne
     @JoinColumn(name = "creator_user_id")
+    @JsonManagedReference
     private UserEntity creatorUser;
 
     @ManyToMany(cascade = {CascadeType.REMOVE})
     @JoinTable(name = "user_tournament",
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             joinColumns = @JoinColumn(name = "tournament_id", referencedColumnName = "tournament_id"))
+    @JsonManagedReference
     private Set<UserEntity> registeredUsers;
 
     @ManyToMany(cascade = {CascadeType.REMOVE})
     @JoinTable(name = "tournament_task",
             inverseJoinColumns = @JoinColumn(name = "task_id", referencedColumnName = "task_id"),
             joinColumns = @JoinColumn(name = "tournament_id", referencedColumnName = "tournament_id"))
+    @JsonManagedReference
     private Set<TaskEntity> tournamentTasks;
 
     public void addTask(TaskEntity task){
         this.tournamentTasks.add(task);
+    }
+
+    public void registerUser(UserEntity userEntity) {
+        this.registeredUsers.add(userEntity);
     }
 }

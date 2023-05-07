@@ -6,8 +6,10 @@ import com.pvp.codingtournament.handler.exception.CodeCompilationException;
 import com.pvp.codingtournament.model.AnalysisResults;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.NotSupportedException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +46,7 @@ public class CodeRunnerImpl implements CodeRunner {
             String testOutput = inputsAndOutputs.get(i)[1];
             String results = jDoodleConnection.executeCode(code, language, testInput);
             JSONObject resultsJson = new JSONObject(results);
-            validateOutput(resultsJson);
+            validateOutput(resultsJson, language);
             String codeOutput = resultsJson.getString("output");
             double cpuTime = resultsJson.getDouble("cpuTime");
             averageCpuTime += cpuTime;
@@ -63,15 +65,23 @@ public class CodeRunnerImpl implements CodeRunner {
                 averageCpuTime);
     }
 
-    private void validateOutput(JSONObject resultsJson) {
+    private void validateOutput(JSONObject resultsJson, String language) {
         if (resultsJson.getString("output").contains("error")){
-            String[] outputInParts = resultsJson.getString("output").split(":");
-            outputInParts = Arrays.copyOfRange(outputInParts, 1, outputInParts.length);
-            StringBuilder output = new StringBuilder();
-            output.append("Line");
-            for (String part : outputInParts) {
-                output.append(":").append(part);
+            String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String fileExtension = "";
+            switch (language){
+                case "java":
+                    fileExtension = ".java";
+                    break;
+                case "python":
+                    fileExtension = ".py";
+                    break;
+                case "javascript":
+                    fileExtension = ".js";
+                    break;
             }
+            String fileName = "/" + "Solution" + username + fileExtension;
+            String output = resultsJson.getString("output").replaceAll(fileName, "Line");
             throw new CodeCompilationException(output.toString());
         }
     }

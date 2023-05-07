@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,6 +55,11 @@ public class TaskController {
     @GetMapping("/getTask/{id}")
     public ResponseEntity<TaskDto> getTaskById(@PathVariable("id") Long taskId){
         return ResponseEntity.ok(taskService.getById(taskId));
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<TaskDto>> getAllTasks(){
+        return ResponseEntity.ok(taskService.getAllTasks());
     }
 
     @ApiOperation("Analyzes and runs user submitted code for task")

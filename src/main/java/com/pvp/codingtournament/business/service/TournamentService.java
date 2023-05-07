@@ -9,4 +9,10 @@ public interface TournamentService {
     List<TournamentDto> findAllTournaments();
 
     TournamentDto createTournament(TournamentCreationDto tournamentCreationDto, List<Long> taskIds);
+
+    void registerUserToTournament(Long tournamentId);
+
+    void finishUserParticipationInTournament(Long tournamentId);
+
+    int deduceUserParticipationPoints(Long tournamentId);
 }

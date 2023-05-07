@@ -1,8 +1,10 @@
 package com.pvp.codingtournament.business.service.impl;
 
 import com.pvp.codingtournament.business.repository.TaskRepository;
+import com.pvp.codingtournament.business.repository.TournamentParticipationRepository;
 import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.TaskEntity;
+import com.pvp.codingtournament.business.repository.model.TournamentParticipationEntity;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.TaskService;
 import com.pvp.codingtournament.business.utils.BaseTaskCodeBuilder;
@@ -16,8 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TournamentParticipationRepository tournamentParticipationRepository;
     private final TaskMapStruct taskMapper;
     private final CodeRunner codeRunner;
 
@@ -66,6 +72,13 @@ public class TaskServiceImpl implements TaskService {
             throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
         }
         TaskEntity taskEntity = optionalTaskEntity.get();
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsername(username);
+        tournamentParticipationEntity.setTask(taskEntity);
+        tournamentParticipationEntity.setFinishedCurrentTask(false);
+        tournamentParticipationRepository.save(tournamentParticipationEntity);
+
         BaseTaskCodeBuilder baseTaskCodeBuilder = new BaseTaskCodeBuilderImpl();
         baseTaskCodeBuilder.setMethodName(taskEntity.getMethodName());
         baseTaskCodeBuilder.setMethodArgumentTypes(taskEntity.getMethodArgumentTypes());
@@ -85,6 +98,22 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskDto> getAllTasks() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
+        if (optionalUserEntity.isEmpty()){
+            throw new NoSuchElementException("User with username: " + username + " does not exist");
+        }
+        UserEntity userEntity = optionalUserEntity.get();
+        List<TaskDto> tasks = new ArrayList<>();
+        switch (userEntity.getRole()){
+            case ROLE_SPONSOR -> tasks = userEntity.getCreatedTasks().stream().map(taskMapper::entityToDto).collect(Collectors.toList());
+            case ROLE_ADMIN -> tasks = taskRepository.findAll().stream().map(taskMapper::entityToDto).collect(Collectors.toList());
+        }
+        return tasks;
+    }
+
+    @Override
     public AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (!optionalTaskEntity.isPresent()) {
@@ -93,6 +122,18 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = optionalTaskEntity.get();
         codeRunner.setCode(code);
         codeRunner.setInputsAndOutputs(taskEntity.getInputOutput());
-        return codeRunner.runCode(taskEntity.getLanguage());
+        AnalysisResults analysisResults = codeRunner.runCode(taskEntity.getLanguage());
+
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsername(username);
+
+        if (analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
+            tournamentParticipationEntity.setFinishedCurrentTask(true);
+            tournamentParticipationEntity.incrementCompletedTaskCount();
+            tournamentParticipationEntity.addPoints(taskEntity.getPoints());
+            tournamentParticipationEntity.addMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
+            tournamentParticipationRepository.save(tournamentParticipationEntity);
+        }
+        return analysisResults;
     }
 }

@@ -1,11 +1,15 @@
 package com.pvp.codingtournament.business.repository.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pvp.codingtournament.business.enums.RoleEnum;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,11 +20,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "user")
 public class UserEntity {
@@ -59,13 +66,17 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private Set<TaskEntity> createdTasks;
+    private List<TaskEntity> createdTasks;
 
     @OneToMany(mappedBy = "creatorUser")
-    @JsonManagedReference
-    private Set<TournamentEntity> createdTournaments;
+    @JsonBackReference
+    private List<TournamentEntity> createdTournaments;
 
     @ManyToMany(mappedBy = "registeredUsers")
     @JsonManagedReference
-    private Set<TournamentEntity> attendingTournaments;
+    private List<TournamentEntity> attendingTournaments;
+
+    public void addPoints(int points) {
+        this.points += points;
+    }
 }

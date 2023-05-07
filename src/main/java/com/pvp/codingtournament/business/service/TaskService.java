@@ -4,6 +4,7 @@ import com.pvp.codingtournament.model.AnalysisResults;
 import com.pvp.codingtournament.model.task.TaskDto;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface TaskService {
 
@@ -13,4 +14,6 @@ public interface TaskService {
     String buildTaskCode(Long taskId);
 
     TaskDto getById(Long taskId);
+
+    List<TaskDto> getAllTasks();
 }
