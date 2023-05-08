@@ -39,6 +39,11 @@ public class TournamentController {
         return ResponseEntity.ok(tournamentService.getTournamentById(tournamentId));
     }
 
+    @GetMapping("/get/history")
+    public ResponseEntity<List<TournamentDto>> getUserTournamentHistory(){
+        return ResponseEntity.ok(tournamentService.getUserTournamentHistory());
+    }
+
     @GetMapping("/get/participation/{id}")
     public ResponseEntity<TournamentParticipationDto> getTournamentUserParticipationById(@PathVariable("id") Long tournamentId){
         return ResponseEntity.ok(tournamentService.getTournamentUserParticipationById(tournamentId));

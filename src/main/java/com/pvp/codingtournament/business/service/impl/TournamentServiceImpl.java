@@ -140,4 +140,14 @@ public class TournamentServiceImpl implements TournamentService {
         }
         return tournamentMapStruct.participationEntityToDto(participationEntity);
     }
+
+    @Override
+    public List<TournamentDto> getUserTournamentHistory() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
+        if (optionalUserEntity.isEmpty()){
+            throw new NoSuchElementException("User with username: " + username + " does not exist");
+        }
+        return optionalUserEntity.get().getAttendingTournaments().stream().map(tournamentMapStruct::entityToDto).collect(Collectors.toList());
+    }
 }
