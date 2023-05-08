@@ -13,6 +13,7 @@ import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.TournamentService;
 import com.pvp.codingtournament.model.tournament.TournamentCreationDto;
 import com.pvp.codingtournament.model.tournament.TournamentDto;
+import com.pvp.codingtournament.model.tournament.TournamentParticipationDto;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -128,5 +129,15 @@ public class TournamentServiceImpl implements TournamentService {
             throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
         }
         return tournamentMapStruct.entityToDto(optionalTournamentEntity.get());
+    }
+
+    @Override
+    public TournamentParticipationDto getTournamentUserParticipationById(Long tournamentId) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
+        if (participationEntity == null){
+            throw new NoSuchElementException("User with username: " + username + " is not participating in tournament with id: " + tournamentId);
+        }
+        return tournamentMapStruct.participationEntityToDto(participationEntity);
     }
 }

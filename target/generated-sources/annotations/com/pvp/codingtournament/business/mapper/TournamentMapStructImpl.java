@@ -1,20 +1,27 @@
 package com.pvp.codingtournament.business.mapper;
 
 import com.pvp.codingtournament.business.repository.model.TournamentEntity;
-import com.pvp.codingtournament.business.repository.model.UserEntity;
-import com.pvp.codingtournament.model.UserDto;
+import com.pvp.codingtournament.business.repository.model.TournamentParticipationEntity;
 import com.pvp.codingtournament.model.tournament.TournamentCreationDto;
 import com.pvp.codingtournament.model.tournament.TournamentDto;
+import com.pvp.codingtournament.model.tournament.TournamentParticipationDto;
+import java.util.ArrayList;
 import javax.annotation.processing.Generated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-05-07T23:03:43+0300",
+    date = "2023-05-08T10:45:26+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Oracle Corporation)"
 )
 @Component
 public class TournamentMapStructImpl implements TournamentMapStruct {
+
+    @Autowired
+    private UserMapStruct userMapStruct;
+    @Autowired
+    private TaskMapStruct taskMapStruct;
 
     @Override
     public TournamentEntity dtoToEntity(TournamentDto dto) {
@@ -34,7 +41,7 @@ public class TournamentMapStructImpl implements TournamentMapStruct {
         tournamentEntity.setThirdPlacePoints( dto.getThirdPlacePoints() );
         tournamentEntity.setDifficulty( dto.getDifficulty() );
         tournamentEntity.setStatus( dto.getStatus() );
-        tournamentEntity.setCreatorUser( userDtoToUserEntity( dto.getCreatorUser() ) );
+        tournamentEntity.setCreatorUser( userMapStruct.dtoToEntity( dto.getCreatorUser() ) );
 
         return tournamentEntity;
     }
@@ -47,7 +54,7 @@ public class TournamentMapStructImpl implements TournamentMapStruct {
 
         TournamentDto tournamentDto = new TournamentDto();
 
-        tournamentDto.setCreatorUser( userEntityToUserDto( entity.getCreatorUser() ) );
+        tournamentDto.setCreatorUser( userMapStruct.entityToDto( entity.getCreatorUser() ) );
         tournamentDto.setId( entity.getId() );
         tournamentDto.setName( entity.getName() );
         tournamentDto.setStartDate( entity.getStartDate() );
@@ -60,6 +67,31 @@ public class TournamentMapStructImpl implements TournamentMapStruct {
         tournamentDto.setStatus( entity.getStatus() );
 
         return tournamentDto;
+    }
+
+    @Override
+    public TournamentParticipationDto participationEntityToDto(TournamentParticipationEntity participationEntity) {
+        if ( participationEntity == null ) {
+            return null;
+        }
+
+        TournamentParticipationDto tournamentParticipationDto = new TournamentParticipationDto();
+
+        tournamentParticipationDto.setUser( userMapStruct.entityToDto( participationEntity.getUser() ) );
+        tournamentParticipationDto.setTask( taskMapStruct.entityToDto( participationEntity.getTask() ) );
+        tournamentParticipationDto.setTournament( entityToDto( participationEntity.getTournament() ) );
+        tournamentParticipationDto.setId( participationEntity.getId() );
+        tournamentParticipationDto.setPoints( participationEntity.getPoints() );
+        tournamentParticipationDto.setCompletedTaskCount( participationEntity.getCompletedTaskCount() );
+        tournamentParticipationDto.setAverageMemoryInKilobytes( participationEntity.getAverageMemoryInKilobytes() );
+        tournamentParticipationDto.setFinishedParticipating( participationEntity.isFinishedParticipating() );
+        ArrayList<Long> arrayList = participationEntity.getUnfinishedTaskIds();
+        if ( arrayList != null ) {
+            tournamentParticipationDto.setUnfinishedTaskIds( new ArrayList<Long>( arrayList ) );
+        }
+        tournamentParticipationDto.setFinishedCurrentTask( participationEntity.isFinishedCurrentTask() );
+
+        return tournamentParticipationDto;
     }
 
     @Override
@@ -80,45 +112,5 @@ public class TournamentMapStructImpl implements TournamentMapStruct {
         tournamentEntity.setDifficulty( creationDto.getDifficulty() );
 
         return tournamentEntity;
-    }
-
-    protected UserEntity userDtoToUserEntity(UserDto userDto) {
-        if ( userDto == null ) {
-            return null;
-        }
-
-        UserEntity userEntity = new UserEntity();
-
-        userEntity.setId( userDto.getId() );
-        userEntity.setName( userDto.getName() );
-        userEntity.setSurname( userDto.getSurname() );
-        userEntity.setUsername( userDto.getUsername() );
-        userEntity.setPassword( userDto.getPassword() );
-        userEntity.setEmail( userDto.getEmail() );
-        userEntity.setPhoneNumber( userDto.getPhoneNumber() );
-        userEntity.setPoints( userDto.getPoints() );
-        userEntity.setLevel( userDto.getLevel() );
-
-        return userEntity;
-    }
-
-    protected UserDto userEntityToUserDto(UserEntity userEntity) {
-        if ( userEntity == null ) {
-            return null;
-        }
-
-        UserDto userDto = new UserDto();
-
-        userDto.setId( userEntity.getId() );
-        userDto.setName( userEntity.getName() );
-        userDto.setSurname( userEntity.getSurname() );
-        userDto.setUsername( userEntity.getUsername() );
-        userDto.setPassword( userEntity.getPassword() );
-        userDto.setEmail( userEntity.getEmail() );
-        userDto.setPhoneNumber( userEntity.getPhoneNumber() );
-        userDto.setPoints( userEntity.getPoints() );
-        userDto.setLevel( userEntity.getLevel() );
-
-        return userDto;
     }
 }

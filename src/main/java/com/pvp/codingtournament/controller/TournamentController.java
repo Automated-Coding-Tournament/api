@@ -3,6 +3,7 @@ package com.pvp.codingtournament.controller;
 import com.pvp.codingtournament.business.service.TournamentService;
 import com.pvp.codingtournament.model.tournament.TournamentCreationDto;
 import com.pvp.codingtournament.model.tournament.TournamentDto;
+import com.pvp.codingtournament.model.tournament.TournamentParticipationDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -36,6 +37,11 @@ public class TournamentController {
     @GetMapping("/get/{id}")
     public ResponseEntity<TournamentDto> getTournamentById(@PathVariable("id") Long tournamentId){
         return ResponseEntity.ok(tournamentService.getTournamentById(tournamentId));
+    }
+
+    @GetMapping("/get/participation/{id}")
+    public ResponseEntity<TournamentParticipationDto> getTournamentUserParticipationById(@PathVariable("id") Long tournamentId){
+        return ResponseEntity.ok(tournamentService.getTournamentUserParticipationById(tournamentId));
     }
 
     @PostMapping("/create")
