@@ -120,4 +120,13 @@ public class TournamentServiceImpl implements TournamentService {
         tournamentParticipationRepository.save(participationEntity);
         return participationEntity.getPoints();
     }
+
+    @Override
+    public TournamentDto getTournamentById(Long tournamentId) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+        return tournamentMapStruct.entityToDto(optionalTournamentEntity.get());
+    }
 }

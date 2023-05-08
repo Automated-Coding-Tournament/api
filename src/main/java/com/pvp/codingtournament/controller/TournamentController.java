@@ -33,6 +33,11 @@ public class TournamentController {
         return ResponseEntity.ok(tournamentService.findAllTournaments());
     }
 
+    @GetMapping("/get/{id}")
+    public ResponseEntity<TournamentDto> getTournamentById(@PathVariable("id") Long tournamentId){
+        return ResponseEntity.ok(tournamentService.getTournamentById(tournamentId));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<TournamentDto> createTournament(@RequestBody TournamentCreationDto tournamentCreationDto, @RequestParam("tasks") List<Long> taskIds){
         return ResponseEntity.ok(tournamentService.createTournament(tournamentCreationDto, taskIds));

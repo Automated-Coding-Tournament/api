@@ -15,4 +15,6 @@ public interface TournamentService {
     void finishUserParticipationInTournament(Long tournamentId);
 
     int deduceUserParticipationPoints(Long tournamentId);
+
+    TournamentDto getTournamentById(Long tournamentId);
 }
