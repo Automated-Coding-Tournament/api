@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -149,5 +150,26 @@ public class TournamentServiceImpl implements TournamentService {
             throw new NoSuchElementException("User with username: " + username + " does not exist");
         }
         return optionalUserEntity.get().getAttendingTournaments().stream().map(tournamentMapStruct::entityToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TournamentParticipationDto> getTournamentUserParticipationLeaderboard(Long tournamentId) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+        TournamentEntity tournament = optionalTournamentEntity.get();
+        List<TournamentParticipationEntity> tournamentParticipationEntities = tournamentParticipationRepository.findAllByTournament(tournament);
+        tournamentParticipationEntities.sort(new Comparator<TournamentParticipationEntity>() {
+            @Override
+            public int compare(TournamentParticipationEntity o1, TournamentParticipationEntity o2) {
+                if (o1.getPoints() != o2.getPoints()){
+                    return Integer.compare(o2.getPoints(), o1.getPoints());
+                }
+                return Integer.compare(o2.getAverageMemoryInKilobytes(), o1.getAverageMemoryInKilobytes());
+            }
+        });
+
+        return tournamentParticipationEntities.stream().map(tournamentMapStruct::participationEntityToDto).collect(Collectors.toList());
     }
 }
