@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -48,8 +49,9 @@ public class TaskController {
     }
 
     @GetMapping("/getCode/{taskId}")
-    public ResponseEntity<String> getTaskCode(@PathVariable("taskId") Long taskId){
-        return ResponseEntity.ok(taskService.buildTaskCode(taskId));
+    public ResponseEntity<String> getTaskCode(@PathVariable("taskId") Long taskId,
+                                              @RequestParam("tournamentId") Long tournamentId){
+        return ResponseEntity.ok(taskService.buildTaskCode(taskId, tournamentId));
     }
 
     @GetMapping("/getTask/{id}")
@@ -74,7 +76,9 @@ public class TaskController {
             @ApiResponse(code = 200, message = "Analysis successful")
     })
     @PostMapping("/submitSolution/{taskId}")
-    public ResponseEntity<AnalysisResults> submitTaskSolution(@PathVariable("taskId") Long taskId, @RequestBody String code) throws IOException, InterruptedException {
-        return ResponseEntity.ok(taskService.analyzeCode(taskId, code));
+    public ResponseEntity<AnalysisResults> submitTaskSolution(@PathVariable("taskId") Long taskId,
+                                                              @RequestParam("tournamentId") Long tournamentId,
+                                                              @RequestBody String code) throws IOException, InterruptedException {
+        return ResponseEntity.ok(taskService.analyzeCode(taskId, tournamentId, code));
     }
 }

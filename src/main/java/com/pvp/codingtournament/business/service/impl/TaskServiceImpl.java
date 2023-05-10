@@ -67,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String buildTaskCode(Long taskId) {
+    public String buildTaskCode(Long taskId, Long tournamentId) {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (optionalTaskEntity.isEmpty()) {
             throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
@@ -75,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = optionalTaskEntity.get();
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsername(username);
+        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
         tournamentParticipationEntity.setTask(taskEntity);
         tournamentParticipationEntity.setFinishedCurrentTask(false);
         tournamentParticipationRepository.save(tournamentParticipationEntity);
@@ -133,9 +133,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException {
+    public AnalysisResults analyzeCode(Long taskId, Long tournamentId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
-        if (!optionalTaskEntity.isPresent()) {
+        if (optionalTaskEntity.isEmpty()) {
             throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
         }
         TaskEntity taskEntity = optionalTaskEntity.get();
@@ -144,7 +144,7 @@ public class TaskServiceImpl implements TaskService {
         AnalysisResults analysisResults = codeRunner.runCode(taskEntity.getLanguage());
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsername(username);
+        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
 
         if (analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
             tournamentParticipationEntity.setFinishedCurrentTask(true);

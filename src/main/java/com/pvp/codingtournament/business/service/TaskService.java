@@ -10,8 +10,8 @@ public interface TaskService {
 
     TaskDto createTask(TaskDto taskDto);
     TaskDto editTask(Long taskId, TaskDto taskDto);
-    AnalysisResults analyzeCode(Long taskId, String code) throws IOException, InterruptedException;
-    String buildTaskCode(Long taskId);
+    AnalysisResults analyzeCode(Long taskId, Long tournamentId, String code) throws IOException, InterruptedException;
+    String buildTaskCode(Long taskId, Long tournamentId);
 
     TaskDto getById(Long taskId);
 
