@@ -116,6 +116,11 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto getNextTournamentTask(Long tournamentId) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
+
+        if (participationEntity.getTask() != null && !participationEntity.isFinishedCurrentTask()){
+            return taskMapper.entityToDto(participationEntity.getTask());
+        }
+
         List<Long> unfinishedTaskIds = participationEntity.getUnfinishedTaskIds();
         if (unfinishedTaskIds.isEmpty()){
             return null;
