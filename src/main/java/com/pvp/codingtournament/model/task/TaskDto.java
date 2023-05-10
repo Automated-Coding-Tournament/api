@@ -43,4 +43,6 @@ public class TaskDto {
 
     @ApiModelProperty(value = "Task language")
     private String language;
+
+    private boolean isMutable;
 }

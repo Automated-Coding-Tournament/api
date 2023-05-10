@@ -16,6 +16,7 @@ import com.pvp.codingtournament.business.utils.impl.BaseTaskCodeBuilderImpl;
 import com.pvp.codingtournament.business.mapper.TaskMapStruct;
 import com.pvp.codingtournament.model.AnalysisResults;
 import com.pvp.codingtournament.model.task.TaskDto;
+import com.pvp.codingtournament.model.tournament.TournamentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -143,12 +144,20 @@ public class TaskServiceImpl implements TaskService {
             throw new NoSuchElementException("User with username: " + username + " does not exist");
         }
         UserEntity userEntity = optionalUserEntity.get();
-        List<TaskDto> tasks = new ArrayList<>();
+        List<TaskEntity> tasks = new ArrayList<>();
         switch (userEntity.getRole()){
-            case ROLE_SPONSOR -> tasks = userEntity.getCreatedTasks().stream().map(taskMapper::entityToDto).collect(Collectors.toList());
-            case ROLE_ADMIN -> tasks = taskRepository.findAll().stream().map(taskMapper::entityToDto).collect(Collectors.toList());
+            case ROLE_SPONSOR -> tasks = userEntity.getCreatedTasks();
+            case ROLE_ADMIN -> tasks = taskRepository.findAll();
         }
-        return tasks;
+
+        List<TaskDto> taskDtos = new ArrayList<>();
+
+        for (TaskEntity task : tasks) {
+            TaskDto taskDto = taskMapper.entityToDto(task);
+            taskDto.setMutable(task.getTournaments().stream().anyMatch(x -> x.getStatus().equals(TournamentStatus.Started)));
+            taskDtos.add(taskDto);
+        }
+        return taskDtos;
     }
 
     @Override
