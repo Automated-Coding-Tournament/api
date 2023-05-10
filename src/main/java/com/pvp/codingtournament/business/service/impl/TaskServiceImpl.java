@@ -154,7 +154,7 @@ public class TaskServiceImpl implements TaskService {
 
         for (TaskEntity task : tasks) {
             TaskDto taskDto = taskMapper.entityToDto(task);
-            taskDto.setMutable(task.getTournaments().stream().anyMatch(x -> x.getStatus().equals(TournamentStatus.Started)));
+            taskDto.setMutable(task.getTournaments().stream().anyMatch(x -> !x.getStatus().equals(TournamentStatus.Started)));
             taskDtos.add(taskDto);
         }
         return taskDtos;
