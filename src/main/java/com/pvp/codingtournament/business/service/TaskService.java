@@ -18,4 +18,6 @@ public interface TaskService {
     TaskDto getNextTournamentTask(Long tournamentId);
 
     List<TaskDto> getAllTasks();
+
+    void deleteTaskById(Long taskId);
 }

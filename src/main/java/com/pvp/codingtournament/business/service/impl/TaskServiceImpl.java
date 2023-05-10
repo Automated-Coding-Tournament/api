@@ -1,9 +1,12 @@
 package com.pvp.codingtournament.business.service.impl;
 
+import com.pvp.codingtournament.business.enums.RoleEnum;
+import com.pvp.codingtournament.business.enums.TournamentStatus;
 import com.pvp.codingtournament.business.repository.TaskRepository;
 import com.pvp.codingtournament.business.repository.TournamentParticipationRepository;
 import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.TaskEntity;
+import com.pvp.codingtournament.business.repository.model.TournamentEntity;
 import com.pvp.codingtournament.business.repository.model.TournamentParticipationEntity;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
 import com.pvp.codingtournament.business.service.TaskService;
@@ -14,15 +17,20 @@ import com.pvp.codingtournament.business.mapper.TaskMapStruct;
 import com.pvp.codingtournament.model.AnalysisResults;
 import com.pvp.codingtournament.model.task.TaskDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +60,12 @@ public class TaskServiceImpl implements TaskService {
         }
 
         TaskEntity taskEntity = optionalTaskEntity.get();
+        for (TournamentEntity tournament : taskEntity.getTournaments()) {
+            if (tournament.getStatus().equals(TournamentStatus.Started)){
+                throw new ValidationException("Task cannot be edited as it is in an active tournament");
+            }
+        }
+
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!taskEntity.getUser().getUsername().equals(username)){
@@ -130,6 +144,31 @@ public class TaskServiceImpl implements TaskService {
             case ROLE_ADMIN -> tasks = taskRepository.findAll().stream().map(taskMapper::entityToDto).collect(Collectors.toList());
         }
         return tasks;
+    }
+
+    @Override
+    public void deleteTaskById(Long taskId) {
+        Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
+        if (optionalTaskEntity.isEmpty()){
+            throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
+        }
+
+        TaskEntity taskEntity = optionalTaskEntity.get();
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Set<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+
+        if (!taskEntity.getUser().getUsername().equals(username) && !roles.contains("ROLE_ADMIN")){
+            throw new SecurityException("Only the creator of the task can delete it");
+        }
+
+        for (TournamentEntity tournament : taskEntity.getTournaments()) {
+            if (tournament.getStatus().equals(TournamentStatus.Started)){
+                throw new ValidationException("Task cannot be deleted as it is in an active tournament");
+            }
+        }
+
+        taskRepository.deleteById(taskId);
     }
 
     @Override
