@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -171,5 +172,16 @@ public class TournamentServiceImpl implements TournamentService {
         });
 
         return tournamentParticipationEntities.stream().map(tournamentMapStruct::participationEntityToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean isUserRegisteredToTournament(Long tournamentId) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+        Set<UserEntity> registeredUsers = optionalTournamentEntity.get().getRegisteredUsers();
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return registeredUsers.stream().anyMatch(x -> x.getUsername().equals(username));
     }
 }

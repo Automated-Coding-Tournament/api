@@ -44,6 +44,11 @@ public class TournamentController {
         return ResponseEntity.ok(tournamentService.getUserTournamentHistory());
     }
 
+    @GetMapping("/isRegistered/{id}")
+    public ResponseEntity<Boolean> isUserRegisteredToTournament(@PathVariable("id") Long tournamentId){
+        return ResponseEntity.ok(tournamentService.isUserRegisteredToTournament(tournamentId));
+    }
+
     @GetMapping("/get/participation/{id}")
     public ResponseEntity<TournamentParticipationDto> getTournamentUserParticipationById(@PathVariable("id") Long tournamentId){
         return ResponseEntity.ok(tournamentService.getTournamentUserParticipationById(tournamentId));
