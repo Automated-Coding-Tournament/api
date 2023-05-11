@@ -140,7 +140,7 @@ public class TournamentServiceImpl implements TournamentService {
         if (optionalTournamentEntity.isEmpty()){
             throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
         }
-        TournamentEntity tournamentEntity = (optionalTournamentEntity.get()
+        TournamentEntity tournamentEntity = (optionalTournamentEntity.get());
         TournamentDto tournamentDto = tournamentMapStruct.entityToDto(tournamentEntity);
         tournamentDto.setRegistered(tournamentEntity.getRegisteredUsers().stream().anyMatch(x -> x.getUsername().equals(username)));
         return tournamentDto;

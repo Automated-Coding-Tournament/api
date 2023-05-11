@@ -1,9 +1,10 @@
 package com.pvp.codingtournament.business.service.impl;
 
-import com.pvp.codingtournament.business.enums.RoleEnum;
 import com.pvp.codingtournament.business.enums.TournamentStatus;
+import com.pvp.codingtournament.business.mapper.TaskMapStruct;
 import com.pvp.codingtournament.business.repository.TaskRepository;
 import com.pvp.codingtournament.business.repository.TournamentParticipationRepository;
+import com.pvp.codingtournament.business.repository.TournamentRepository;
 import com.pvp.codingtournament.business.repository.UserRepository;
 import com.pvp.codingtournament.business.repository.model.TaskEntity;
 import com.pvp.codingtournament.business.repository.model.TournamentEntity;
@@ -13,20 +14,16 @@ import com.pvp.codingtournament.business.service.TaskService;
 import com.pvp.codingtournament.business.utils.BaseTaskCodeBuilder;
 import com.pvp.codingtournament.business.utils.CodeRunner;
 import com.pvp.codingtournament.business.utils.impl.BaseTaskCodeBuilderImpl;
-import com.pvp.codingtournament.business.mapper.TaskMapStruct;
 import com.pvp.codingtournament.model.AnalysisResults;
 import com.pvp.codingtournament.model.task.TaskDto;
-import com.pvp.codingtournament.model.tournament.TournamentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -39,6 +36,7 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final TournamentRepository tournamentRepository;
     private final UserRepository userRepository;
     private final TournamentParticipationRepository tournamentParticipationRepository;
     private final TaskMapStruct taskMapper;
@@ -184,6 +182,12 @@ public class TaskServiceImpl implements TaskService {
             if (tournament.getStatus().equals(TournamentStatus.Started)){
                 throw new ValidationException("Task cannot be deleted as it is in an active tournament");
             }
+        }
+
+        Set<TournamentEntity> tournamentEntities = taskEntity.getTournaments();
+        for (TournamentEntity tournamentEntity : tournamentEntities) {
+            tournamentEntity.getTournamentTasks().remove(taskEntity);
+            tournamentRepository.save(tournamentEntity);
         }
 
         taskRepository.deleteById(taskId);

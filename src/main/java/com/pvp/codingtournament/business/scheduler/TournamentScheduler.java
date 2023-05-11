@@ -27,7 +27,7 @@ public class TournamentScheduler {
     private final TournamentParticipationRepository tournamentParticipationRepository;
     private final UserRepository userRepository;
 
-    @Scheduled(cron = "0 * * * * *") // every minute
+    @Scheduled(cron = "*/15 * * * * *") // every 15 seconds
     public void checkTournaments(){
         System.out.println("runs");
         for (TournamentEntity tournament : tournamentRepository.findAll()) {
