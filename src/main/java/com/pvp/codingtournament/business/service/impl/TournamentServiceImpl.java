@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +41,15 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public List<TournamentDto> findAllTournaments() {
-        return tournamentRepository.findAll().stream().map(tournamentMapStruct::entityToDto).collect(Collectors.toList());
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<TournamentEntity> tournamentEntities = tournamentRepository.findAll();
+        List<TournamentDto> tournamentDtos = new ArrayList<>();
+        for (TournamentEntity tournamentEntity : tournamentEntities) {
+            TournamentDto tournamentDto = tournamentMapStruct.entityToDto(tournamentEntity);
+            tournamentDto.setRegistered(tournamentEntity.getRegisteredUsers().stream().anyMatch(x -> x.getUsername().equals(username)));
+            tournamentDtos.add(tournamentDto);
+        }
+        return tournamentDtos;
     }
 
     @Override
@@ -126,11 +135,15 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public TournamentDto getTournamentById(Long tournamentId) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
         if (optionalTournamentEntity.isEmpty()){
             throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
         }
-        return tournamentMapStruct.entityToDto(optionalTournamentEntity.get());
+        TournamentEntity tournamentEntity = (optionalTournamentEntity.get()
+        TournamentDto tournamentDto = tournamentMapStruct.entityToDto(tournamentEntity);
+        tournamentDto.setRegistered(tournamentEntity.getRegisteredUsers().stream().anyMatch(x -> x.getUsername().equals(username)));
+        return tournamentDto;
     }
 
     @Override

@@ -48,4 +48,6 @@ public class TournamentDto {
 
     @ApiModelProperty(value = "User, who created the tournament")
     private UserDto creatorUser;
+
+    private boolean isRegistered;
 }
