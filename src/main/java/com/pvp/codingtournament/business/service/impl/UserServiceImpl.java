@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
         }
 
         UserEntity userEntity = userMapper.dtoToEntity(user);
+        userEntity.setUsername(userEntity.getUsername().toLowerCase());
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userEntity.setRole(RoleEnum.ROLE_USER);
         userEntity.setLevel("Beginner");

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Component
@@ -29,7 +30,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String username = authentication.getName().toLowerCase();
         String password = authentication.getCredentials().toString();
         Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
 

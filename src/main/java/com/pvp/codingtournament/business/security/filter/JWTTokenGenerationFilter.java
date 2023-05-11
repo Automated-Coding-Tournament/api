@@ -28,7 +28,7 @@ public class JWTTokenGenerationFilter extends OncePerRequestFilter {
             SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
 
             String jwt = Jwts.builder().setIssuer("Automated-coding-tournament").setSubject("JWT Token")
-                    .claim("username", authentication.getName())
+                    .claim("username", authentication.getName().toLowerCase())
                     .claim("authorities", populateAuthorites(authentication.getAuthorities()))
                     .setIssuedAt(new Date())
                     .setExpiration(new Date((new Date().getTime() + 10800000)))
