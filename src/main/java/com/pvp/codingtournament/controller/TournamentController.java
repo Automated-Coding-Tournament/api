@@ -50,6 +50,11 @@ public class TournamentController {
         return ResponseEntity.ok(tournamentService.isUserRegisteredToTournament(tournamentId));
     }
 
+    @GetMapping("/isFinishedParticipating/{id}")
+    public ResponseEntity<Boolean> isUserFinishedParticipating(@PathVariable("id") Long tournamentId){
+        return ResponseEntity.ok(tournamentService.isUserFinishedParticipating(tournamentId));
+    }
+
     @GetMapping("/get/participation/{id}")
     public ResponseEntity<TournamentParticipationDto> getTournamentUserParticipationById(@PathVariable("id") Long tournamentId){
         return ResponseEntity.ok(tournamentService.getTournamentUserParticipationById(tournamentId));

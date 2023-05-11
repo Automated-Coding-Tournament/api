@@ -184,4 +184,15 @@ public class TournamentServiceImpl implements TournamentService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return registeredUsers.stream().anyMatch(x -> x.getUsername().equals(username));
     }
+
+    @Override
+    public Boolean isUserFinishedParticipating(Long tournamentId) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
+        return tournamentParticipationEntity.isFinishedParticipating();
+    }
 }

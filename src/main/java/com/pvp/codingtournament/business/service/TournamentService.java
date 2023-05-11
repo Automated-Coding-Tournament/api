@@ -26,4 +26,6 @@ public interface TournamentService {
     List<TournamentParticipationDto> getTournamentUserParticipationLeaderboard(Long tournamentId);
 
     Boolean isUserRegisteredToTournament(Long tournamentId);
+
+    Boolean isUserFinishedParticipating(Long tournamentId);
 }
