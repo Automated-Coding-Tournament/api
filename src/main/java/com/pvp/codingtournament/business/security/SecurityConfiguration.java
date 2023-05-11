@@ -33,9 +33,9 @@ public class SecurityConfiguration {
                 .addFilterAfter(new JWTTokenGenerationFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JWTTokenValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/login", "/user/register", "/swagger-ui/", "/task/getTask/**").permitAll()
+                .antMatchers("/login", "/user/register", "/swagger-ui/").permitAll()
                 .antMatchers("/user/**").hasAnyRole("USER", "SPONSOR", "ADMIN")
-                .antMatchers("/tournament/register/**").hasRole("USER")
+                .antMatchers("/tournament/register/**", "/task/getTask/**").hasRole("USER")
                 .antMatchers("/task/create", "/task/edit/**", "/task/delete/**", "/tournament/create",
                         "/tournament/edit/**", "/tournament/delete/**", "/task/getAll").hasAnyRole("SPONSOR", "ADMIN")
                 .anyRequest()
