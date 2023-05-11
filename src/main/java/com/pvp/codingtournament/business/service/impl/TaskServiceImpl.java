@@ -71,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
         Set<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
 
-        if (!taskEntity.getUser().getUsername().equals(username) && !roles.contains("ADMIN")){
+        if (!taskEntity.getUser().getUsername().equals(username) && !roles.contains("ROLE_ADMIN")){
             throw new SecurityException("Only the task creator can edit this task");
         }
 
