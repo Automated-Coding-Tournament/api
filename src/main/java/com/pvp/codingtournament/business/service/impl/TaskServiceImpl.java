@@ -143,6 +143,7 @@ public class TaskServiceImpl implements TaskService {
         if (optionalUserEntity.isEmpty()){
             throw new NoSuchElementException("User with username: " + username + " does not exist");
         }
+
         UserEntity userEntity = optionalUserEntity.get();
         List<TaskEntity> tasks = new ArrayList<>();
         switch (userEntity.getRole()){
@@ -151,13 +152,13 @@ public class TaskServiceImpl implements TaskService {
         }
 
         List<TaskDto> taskDtos = new ArrayList<>();
-
         for (TaskEntity task : tasks) {
             TaskDto taskDto = taskMapper.entityToDto(task);
             Set<TournamentEntity> tournaments = task.getTournaments();
             taskDto.setMutable(tournaments.size() == 0 ? true : tournaments.stream().anyMatch(x -> !x.getStatus().equals(TournamentStatus.Started)));
             taskDtos.add(taskDto);
         }
+
         return taskDtos;
     }
 

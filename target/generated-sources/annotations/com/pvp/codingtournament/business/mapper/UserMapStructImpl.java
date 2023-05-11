@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-05-11T02:57:41+0300",
+    date = "2023-05-11T10:12:26+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Oracle Corporation)"
 )
 @Component
@@ -30,6 +30,7 @@ public class UserMapStructImpl implements UserMapStruct {
         userDto.setPhoneNumber( entity.getPhoneNumber() );
         userDto.setPoints( entity.getPoints() );
         userDto.setLevel( entity.getLevel() );
+        userDto.setRole( entity.getRole() );
 
         return userDto;
     }
@@ -51,6 +52,7 @@ public class UserMapStructImpl implements UserMapStruct {
         userEntity.setPhoneNumber( dto.getPhoneNumber() );
         userEntity.setPoints( dto.getPoints() );
         userEntity.setLevel( dto.getLevel() );
+        userEntity.setRole( dto.getRole() );
 
         return userEntity;
     }

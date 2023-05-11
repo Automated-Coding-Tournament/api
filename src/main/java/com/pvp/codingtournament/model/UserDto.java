@@ -1,6 +1,7 @@
 package com.pvp.codingtournament.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pvp.codingtournament.business.enums.RoleEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,4 +32,5 @@ public class UserDto {
     private int points;
     @ApiModelProperty(value = "Level of the user", required = false, notes = "Not needed for user creation")
     private String level;
+    private RoleEnum role;
 }
