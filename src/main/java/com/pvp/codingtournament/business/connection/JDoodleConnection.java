@@ -26,6 +26,9 @@ public class JDoodleConnection {
 
     public String executeCode(String script, String language, String arguments) {
         String versionIndex = "4";
+        if ("python".equals(language)) {
+            language = "python3";
+        }
         String output = "";
         String results = "";
         try {

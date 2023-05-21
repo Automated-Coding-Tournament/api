@@ -46,9 +46,77 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto createTask(TaskDto taskDto) {
         TaskEntity taskEntity = taskMapper.dtoToEntity(taskDto);
         UserEntity entity = userRepository.findByUsername(String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).get();
+        for (int i = 0; i < taskEntity.getInputOutput().size(); i++) {
+            String[] testCase = taskEntity.getInputOutput().get(i);
+            taskEntity.getInputOutput().get(i)[0] = parseArgumentValueString(testCase[0], taskEntity.getMethodArgumentTypes(), false, taskEntity.getLanguage());
+            taskEntity.getInputOutput().get(i)[1] = parseArgumentValueString(testCase[1], taskEntity.getMethodArgumentTypes(), true, taskEntity.getLanguage());
+        }
+        //parseTask(taskEntity);
         taskEntity.setUser(entity);
         taskRepository.save(taskEntity);
         return taskMapper.entityToDto(taskEntity);
+    }
+
+    private String parseArgumentValueString(String argumentValues, ArrayList<String> methodArgumentTypes, boolean output, String language) {
+        String[] inputs = argumentValues.split(";");
+            for (int j = 0; j < inputs.length; j++) {
+                if (methodArgumentTypes.get(j).equalsIgnoreCase("string[]")){
+                    String stringArrayInput = inputs[j];
+                    String replaceString = stringArrayInput;
+                    stringArrayInput = stringArrayInput.replaceAll("\\[", "");
+                    stringArrayInput = stringArrayInput.replaceAll("]", "");
+                    stringArrayInput = stringArrayInput.stripLeading();
+                    stringArrayInput = stringArrayInput.stripTrailing();
+                    stringArrayInput = stringArrayInput.replaceAll(" ", ",");
+                    stringArrayInput = stringArrayInput.replaceAll(",+", ",");
+                    stringArrayInput = stringArrayInput.replaceAll("\"", "");
+                    stringArrayInput = stringArrayInput.replaceAll("'", "");
+                    if (stringArrayInput.endsWith(",")){
+                        stringArrayInput = stringArrayInput.substring(0, stringArrayInput.length() - 1);
+                    }
+
+                    if (stringArrayInput.startsWith(",")){
+                        stringArrayInput = stringArrayInput.substring(1);
+                    }
+                    StringBuilder stringArrayInputBuilder = new StringBuilder(stringArrayInput);
+                    for (int k = 0; k < stringArrayInputBuilder.length(); k++) {
+                        char character = stringArrayInputBuilder.charAt(k);
+                        if (k == 0 && character != '['){
+                            stringArrayInputBuilder.insert(k, "[");
+                            continue;
+                        }
+
+                        if (k != 0 && Character.isAlphabetic(character) && (stringArrayInputBuilder.charAt(k - 1) == ',')){
+                            stringArrayInputBuilder.insert(k, " \"");
+                        }
+
+                        if (k != 0 && Character.isAlphabetic(character) && (stringArrayInputBuilder.charAt(k - 1) == '[')){
+                            stringArrayInputBuilder.insert(k, "\"");
+                        }
+
+                        if (k != 0 && k != (stringArrayInputBuilder.length() - 1) && Character.isAlphabetic(character) && (stringArrayInputBuilder.charAt(k + 1) == ',')){
+                            stringArrayInputBuilder.insert(k + 1, "\"");
+                        }
+
+                        if (k == (stringArrayInputBuilder.length() - 1) && Character.isAlphabetic(character)){
+                            stringArrayInputBuilder.append("\"]");
+                        }
+
+                        if ( k != (stringArrayInputBuilder.length() - 1) && Character.isAlphabetic(character) && stringArrayInputBuilder.charAt(k + 1) == ']'){
+                            stringArrayInputBuilder.insert(k, "\"");
+                        }
+
+                        if (k == (stringArrayInputBuilder.length() - 1) && character != ']'){
+                            stringArrayInputBuilder.append("]");
+                        }
+                    }
+                    argumentValues = argumentValues.replace(replaceString, stringArrayInputBuilder.toString());
+                }
+            }
+        if (output && language.equals("python")){
+            argumentValues = argumentValues.replaceAll("\"", "'");
+        }
+        return argumentValues;
     }
 
     @Override
@@ -59,6 +127,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         TaskEntity taskEntity = optionalTaskEntity.get();
+
         for (TournamentEntity tournament : taskEntity.getTournaments()) {
             if (tournament.getStatus().equals(TournamentStatus.Started)){
                 throw new ValidationException("Task cannot be edited as it is in an active tournament");
@@ -74,6 +143,13 @@ public class TaskServiceImpl implements TaskService {
         }
 
         TaskEntity editedTaskEntity = taskMapper.dtoToEntity(taskDto);
+
+        for (int i = 0; i < editedTaskEntity.getInputOutput().size(); i++) {
+            String[] testCase = editedTaskEntity.getInputOutput().get(i);
+            editedTaskEntity.getInputOutput().get(i)[0] = parseArgumentValueString(testCase[0], editedTaskEntity.getMethodArgumentTypes(), false, editedTaskEntity.getLanguage());
+            editedTaskEntity.getInputOutput().get(i)[1] = parseArgumentValueString(testCase[1], editedTaskEntity.getMethodArgumentTypes(), true, editedTaskEntity.getLanguage());
+        }
+        //parseTask(editedTaskEntity);
         editedTaskEntity.setId(taskEntity.getId());
         editedTaskEntity.setTournaments(taskEntity.getTournaments());
         editedTaskEntity.setUser(taskEntity.getUser());
@@ -91,9 +167,11 @@ public class TaskServiceImpl implements TaskService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
-        tournamentParticipationEntity.setTask(taskEntity);
-        tournamentParticipationEntity.setFinishedCurrentTask(false);
-        tournamentParticipationRepository.save(tournamentParticipationEntity);
+        if (tournamentParticipationEntity != null){
+            tournamentParticipationEntity.setTask(taskEntity);
+            tournamentParticipationEntity.setFinishedCurrentTask(false);
+            tournamentParticipationRepository.save(tournamentParticipationEntity);
+        }
 
         BaseTaskCodeBuilder baseTaskCodeBuilder = new BaseTaskCodeBuilderImpl();
         baseTaskCodeBuilder.setMethodName(taskEntity.getMethodName());
@@ -207,7 +285,7 @@ public class TaskServiceImpl implements TaskService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
 
-        if (analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
+        if (tournamentParticipationEntity != null && analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
             tournamentParticipationEntity.setFinishedCurrentTask(true);
             tournamentParticipationEntity.incrementCompletedTaskCount();
             tournamentParticipationEntity.addPoints(taskEntity.getPoints());

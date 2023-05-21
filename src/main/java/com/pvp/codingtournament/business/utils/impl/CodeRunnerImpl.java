@@ -64,23 +64,25 @@ public class CodeRunnerImpl implements CodeRunner {
     }
 
     private void validateOutput(JSONObject resultsJson, String language) {
-        if (resultsJson.getString("output").contains("error")){
+        if (resultsJson.getString("output").contains("error") || resultsJson.getString("output").contains("Traceback")){
             String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String fileExtension = "";
-            switch (language){
-                case "java":
+            String fileName = "";
+            String output = "";
+            switch (language) {
+                case "java" -> {
                     fileExtension = ".java";
-                    break;
-                case "python":
-                    fileExtension = ".py";
-                    break;
-                case "javascript":
-                    fileExtension = ".js";
-                    break;
+                    fileName = "/" + "Solution" + username + fileExtension;
+                    output = resultsJson.getString("output").replaceAll(fileName, "Line");
+                }
+                case "python" -> {
+                    output = resultsJson.getString("output");
+                    int indexOfFirstLineWord = output.indexOf("line");
+                    output = output.substring(indexOfFirstLineWord);
+                }
+                case "javascript" -> fileExtension = ".js";
             }
-            String fileName = "/" + "Solution" + username + fileExtension;
-            String output = resultsJson.getString("output").replaceAll(fileName, "Line");
-            throw new CodeCompilationException(output.toString());
+            throw new CodeCompilationException(output);
         }
     }
 }
