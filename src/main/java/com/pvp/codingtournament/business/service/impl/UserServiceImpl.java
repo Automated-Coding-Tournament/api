@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
         int size = Math.min(allUsers.size(), 10);
         for (int i = 0; i < size; i++) {
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", allUsers.get(i).getId());
             jsonObject.put("index", i);
             jsonObject.put("username", allUsers.get(i).getUsername());
             jsonObject.put("level", allUsers.get(i).getLevel());
