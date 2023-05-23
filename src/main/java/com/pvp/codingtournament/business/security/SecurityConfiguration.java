@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                 .antMatchers("/user/**", "/task/getTask/**").hasAnyRole("USER", "SPONSOR", "ADMIN")
                 .antMatchers("/tournament/register/**").hasRole("USER")
                 .antMatchers("/task/create", "/task/edit/**", "/task/delete/**", "/tournament/create",
-                        "/tournament/edit/**", "/tournament/delete/**", "/task/getAll").hasAnyRole("SPONSOR", "ADMIN")
+                        "/tournament/edit/**", "/tournament/delete/**", "/task/getAll", "/task/getByTournament/**").hasAnyRole("SPONSOR", "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

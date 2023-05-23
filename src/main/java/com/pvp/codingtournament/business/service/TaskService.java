@@ -5,6 +5,7 @@ import com.pvp.codingtournament.model.task.TaskDto;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskService {
 
@@ -20,4 +21,6 @@ public interface TaskService {
     List<TaskDto> getAllTasks();
 
     void deleteTaskById(Long taskId);
+
+    Set<TaskDto> getAllTasksByTournamentId(Long tournamentId);
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,6 +64,11 @@ public class TaskController {
     @GetMapping("/getAll")
     public ResponseEntity<List<TaskDto>> getAllTasks(){
         return ResponseEntity.ok(taskService.getAllTasks());
+    }
+
+    @GetMapping("/getByTournament/{tournamentId}")
+    public ResponseEntity<Set<TaskDto>> getAllTasksByTournamentId(@PathVariable("tournamentId") Long tournamentId){
+        return ResponseEntity.ok(taskService.getAllTasksByTournamentId(tournamentId));
     }
 
     @GetMapping("/get/nextTournamentTask/{id}")

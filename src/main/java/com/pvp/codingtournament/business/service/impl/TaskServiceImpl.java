@@ -272,6 +272,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public Set<TaskDto> getAllTasksByTournamentId(Long tournamentId) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+        TournamentEntity tournamentEntity = optionalTournamentEntity.get();
+        return tournamentEntity.getTournamentTasks().stream().map(taskMapper::entityToDto).collect(Collectors.toSet());
+    }
+
+    @Override
     public AnalysisResults analyzeCode(Long taskId, Long tournamentId, String code) throws IOException, InterruptedException {
         Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
         if (optionalTaskEntity.isEmpty()) {
