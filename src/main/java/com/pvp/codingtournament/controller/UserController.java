@@ -18,11 +18,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+
+    @GetMapping("/get/globalLeaderboard")
+    public ResponseEntity<List<Map<String, Object>>> getGlobalLeaderboard(){
+        return ResponseEntity.ok(userService.getGlobalLeaderboard());
+    }
 
     @ApiOperation("Creates a new user")
     @ApiResponses({

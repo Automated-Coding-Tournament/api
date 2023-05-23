@@ -11,11 +11,17 @@ import com.pvp.codingtournament.handler.exception.CustomException;
 import com.pvp.codingtournament.model.UserDto;
 import com.pvp.codingtournament.model.UserEditDto;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -80,5 +86,19 @@ public class UserServiceImpl implements UserService {
             throw new NoSuchElementException("User with username: " + username + " does not exist");
         }
         return userMapper.entityToDto(optionalUserEntity.get());
+    }
+
+    @Override
+    public List<Map<String, Object>> getGlobalLeaderboard() {
+        List<UserEntity> allUsers = userRepository.findAll(Sort.by(Sort.Direction.DESC, "points"));
+        List<Map<String, Object>> leaderboard = new ArrayList<>();
+        for (int i = 0; i < allUsers.size(); i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("index", i);
+            jsonObject.put("username", allUsers.get(i).getUsername());
+            jsonObject.put("level", allUsers.get(i).getLevel());
+            leaderboard.add(jsonObject.toMap());
+        }
+        return leaderboard;
     }
 }
