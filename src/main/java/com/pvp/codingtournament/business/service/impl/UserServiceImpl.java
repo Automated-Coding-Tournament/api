@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -91,12 +92,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Map<String, Object>> getGlobalLeaderboard() {
         List<UserEntity> allUsers = userRepository.findAll(Sort.by(Sort.Direction.DESC, "points"));
+        allUsers = allUsers.stream().filter(x -> x.getRole().equals(RoleEnum.ROLE_USER)).collect(Collectors.toList());
         List<Map<String, Object>> leaderboard = new ArrayList<>();
-        for (int i = 0; i < allUsers.size(); i++) {
+        int size = Math.min(allUsers.size(), 10);
+        for (int i = 0; i < size; i++) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("index", i);
             jsonObject.put("username", allUsers.get(i).getUsername());
             jsonObject.put("level", allUsers.get(i).getLevel());
+            jsonObject.put("points", allUsers.get(i).getPoints());
             leaderboard.add(jsonObject.toMap());
         }
         return leaderboard;
