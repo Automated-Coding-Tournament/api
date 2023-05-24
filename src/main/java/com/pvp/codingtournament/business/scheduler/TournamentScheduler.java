@@ -1,6 +1,7 @@
 package com.pvp.codingtournament.business.scheduler;
 
 import com.pvp.codingtournament.business.enums.TournamentStatus;
+import com.pvp.codingtournament.business.repository.TaskRepository;
 import com.pvp.codingtournament.business.repository.TournamentParticipationRepository;
 import com.pvp.codingtournament.business.repository.TournamentRepository;
 import com.pvp.codingtournament.business.repository.UserRepository;
@@ -8,6 +9,7 @@ import com.pvp.codingtournament.business.repository.model.TaskEntity;
 import com.pvp.codingtournament.business.repository.model.TournamentEntity;
 import com.pvp.codingtournament.business.repository.model.TournamentParticipationEntity;
 import com.pvp.codingtournament.business.repository.model.UserEntity;
+import com.pvp.codingtournament.business.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,6 +31,8 @@ public class TournamentScheduler {
     private final TournamentRepository tournamentRepository;
     private final TournamentParticipationRepository tournamentParticipationRepository;
     private final UserRepository userRepository;
+
+    private final TaskRepository taskRepository;
 
     @Scheduled(cron = "*/15 * * * * *") // every 15 seconds
     public void checkTournaments(){
@@ -44,6 +51,15 @@ public class TournamentScheduler {
                     tournamentParticipationEntity.setFinishedCurrentTask(false);
                     ArrayList<Long> unfinishedTaskIds = (ArrayList<Long>) tournament.getTournamentTasks().stream().map(TaskEntity::getId).collect(Collectors.toList());
                     tournamentParticipationEntity.setUnfinishedTaskIds(unfinishedTaskIds);
+
+                    Random random = new Random();
+                    long nextTaskId = random.nextLong(0, unfinishedTaskIds.size());
+                    Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(unfinishedTaskIds.get((int) nextTaskId));
+                    if (optionalTaskEntity.isEmpty()){
+                        throw new NoSuchElementException("Task with id: " + nextTaskId + " does not exist");
+                    }
+                    TaskEntity taskEntity = optionalTaskEntity.get();
+                    tournamentParticipationEntity.setTask(taskEntity);
                     tournamentParticipationRepository.save(tournamentParticipationEntity);
                 }
             }

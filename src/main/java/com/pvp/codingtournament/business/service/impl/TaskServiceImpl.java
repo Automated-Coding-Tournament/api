@@ -149,7 +149,7 @@ public class TaskServiceImpl implements TaskService {
             editedTaskEntity.getInputOutput().get(i)[0] = parseArgumentValueString(testCase[0], editedTaskEntity.getMethodArgumentTypes(), false, editedTaskEntity.getLanguage());
             editedTaskEntity.getInputOutput().get(i)[1] = parseArgumentValueString(testCase[1], editedTaskEntity.getMethodArgumentTypes(), true, editedTaskEntity.getLanguage());
         }
-        //parseTask(editedTaskEntity);
+
         editedTaskEntity.setId(taskEntity.getId());
         editedTaskEntity.setTournaments(taskEntity.getTournaments());
         editedTaskEntity.setUser(taskEntity.getUser());
@@ -165,13 +165,6 @@ public class TaskServiceImpl implements TaskService {
         }
         TaskEntity taskEntity = optionalTaskEntity.get();
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
-        if (tournamentParticipationEntity != null){
-            tournamentParticipationEntity.setTask(taskEntity);
-            tournamentParticipationEntity.setFinishedCurrentTask(false);
-            tournamentParticipationRepository.save(tournamentParticipationEntity);
-        }
 
         BaseTaskCodeBuilder baseTaskCodeBuilder = new BaseTaskCodeBuilderImpl();
         baseTaskCodeBuilder.setMethodName(taskEntity.getMethodName());
@@ -192,7 +185,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto getNextTournamentTask(Long tournamentId) {
+    public TaskDto nextTournamentTask(Long tournamentId) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
 
@@ -211,6 +204,9 @@ public class TaskServiceImpl implements TaskService {
             throw new NoSuchElementException("Task with id: " + nextTaskId + " does not exist");
         }
         TaskEntity taskEntity = optionalTaskEntity.get();
+        participationEntity.setTask(taskEntity);
+        participationEntity.setFinishedCurrentTask(false);
+        tournamentParticipationRepository.save(participationEntity);
         return taskMapper.entityToDto(taskEntity);
     }
 
@@ -279,6 +275,16 @@ public class TaskServiceImpl implements TaskService {
         }
         TournamentEntity tournamentEntity = optionalTournamentEntity.get();
         return tournamentEntity.getTournamentTasks().stream().map(taskMapper::entityToDto).collect(Collectors.toSet());
+    }
+
+    @Override
+    public TaskDto getCurrentParticipationTaskByTournamentID(Long tournamentId) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
+        if (participationEntity == null){
+            throw new NoSuchElementException("User is not participating in tournament");
+        }
+        return taskMapper.entityToDto(participationEntity.getTask());
     }
 
     @Override

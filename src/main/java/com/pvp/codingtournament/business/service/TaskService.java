@@ -16,11 +16,13 @@ public interface TaskService {
 
     TaskDto getById(Long taskId);
 
-    TaskDto getNextTournamentTask(Long tournamentId);
+    TaskDto nextTournamentTask(Long tournamentId);
 
     List<TaskDto> getAllTasks();
 
     void deleteTaskById(Long taskId);
 
     Set<TaskDto> getAllTasksByTournamentId(Long tournamentId);
+
+    TaskDto getCurrentParticipationTaskByTournamentID(Long tournamentId);
 }

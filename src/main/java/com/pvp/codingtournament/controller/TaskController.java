@@ -71,9 +71,14 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getAllTasksByTournamentId(tournamentId));
     }
 
-    @GetMapping("/get/nextTournamentTask/{id}")
-    public ResponseEntity<TaskDto> getNextTournamentTask(@PathVariable("id") Long tournamentId){
-        TaskDto taskDto = taskService.getNextTournamentTask(tournamentId);
+    @GetMapping("/get/participation/current/{id}")
+    public ResponseEntity<TaskDto> getCurrentParticipationTaskByTournamentId(@PathVariable("id") Long tournamentId){
+        return ResponseEntity.ok(taskService.getCurrentParticipationTaskByTournamentID(tournamentId));
+    }
+
+    @PostMapping("/get/nextTournamentTask/{id}")
+    public ResponseEntity<TaskDto> nextTournamentTask(@PathVariable("id") Long tournamentId){
+        TaskDto taskDto = taskService.nextTournamentTask(tournamentId);
         return taskDto != null ? ResponseEntity.ok(taskDto) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
