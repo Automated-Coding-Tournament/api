@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,5 +93,11 @@ public class TournamentController {
                                                         @RequestParam("tasks") List<Long> taskIds,
                                                         @RequestBody TournamentCreationDto tournamentCreationDto){
         return ResponseEntity.ok(tournamentService.editTournament(tournamentId, taskIds, tournamentCreationDto));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteTournament(@PathVariable("id") Long tournamentId){
+        tournamentService.deleteTournament(tournamentId);
+        return ResponseEntity.ok().build();
     }
 }

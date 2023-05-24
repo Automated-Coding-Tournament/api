@@ -30,4 +30,6 @@ public interface TournamentService {
     Boolean isUserFinishedParticipating(Long tournamentId);
 
     TournamentDto editTournament(Long tournamentId, List<Long> taskIds, TournamentCreationDto tournamentCreationDto);
+
+    void deleteTournament(Long tournamentId);
 }

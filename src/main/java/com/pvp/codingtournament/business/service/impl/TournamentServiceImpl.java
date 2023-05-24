@@ -229,7 +229,7 @@ public class TournamentServiceImpl implements TournamentService {
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
 
         if (!tournamentEntity.getCreatorUser().getUsername().equals(username) && !roles.contains("ROLE_ADMIN")){
-            throw new SecurityException("Only the creator of the tournament can edit it");
+            throw new SecurityException("Only the creator of the tournament or admin can edit it");
         }
 
         TournamentEntity mappedEntity = tournamentMapStruct.creationDtoToEntity(tournamentCreationDto);
@@ -247,6 +247,33 @@ public class TournamentServiceImpl implements TournamentService {
         }
 
         return tournamentMapStruct.entityToDto(tournamentRepository.save(mappedEntity));
+    }
+
+    @Override
+    public void deleteTournament(Long tournamentId) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+        TournamentEntity tournamentEntity = optionalTournamentEntity.get();
+
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Set<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+
+        if (!tournamentEntity.getCreatorUser().getUsername().equals(username) && !roles.contains("ROLE_ADMIN")){
+            throw new SecurityException("Only the creator of the tournament or admin can delete it");
+        }
+
+        if (tournamentEntity.getStatus().equals(TournamentStatus.Started)){
+            throw new ValidationException("Cannot delete tournament as it is already started");
+        }
+
+        List<TournamentParticipationEntity> tournamentParticipationEntities = tournamentParticipationRepository.findAllByTournament(tournamentEntity);
+        for (TournamentParticipationEntity participation : tournamentParticipationEntities) {
+            tournamentParticipationRepository.deleteById(participation.getId());
+        }
+        tournamentRepository.deleteById(tournamentEntity.getId());
     }
 
 }
