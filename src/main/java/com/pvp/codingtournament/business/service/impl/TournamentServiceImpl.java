@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -208,4 +209,41 @@ public class TournamentServiceImpl implements TournamentService {
         TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
         return tournamentParticipationEntity.isFinishedParticipating();
     }
+
+    @Override
+    public TournamentDto editTournament(Long tournamentId, List<Long> taskIds, TournamentCreationDto tournamentCreationDto) {
+        Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
+        if (optionalTournamentEntity.isEmpty()){
+            throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
+        }
+
+        TournamentEntity tournamentEntity = optionalTournamentEntity.get();
+
+        if (!tournamentEntity.getStatus().equals(TournamentStatus.Registration)){
+            throw new ValidationException("Tournament can only be edited in the registration phase");
+        }
+
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!tournamentEntity.getCreatorUser().getUsername().equals(username)){
+            throw new ValidationException("Only the creator of the tournament can edit it");
+        }
+
+        TournamentEntity mappedEntity = tournamentMapStruct.creationDtoToEntity(tournamentCreationDto);
+        mappedEntity.setId(tournamentEntity.getId());
+        mappedEntity.setStatus(tournamentEntity.getStatus());
+        mappedEntity.setCreatorUser(tournamentEntity.getCreatorUser());
+        mappedEntity.setRegisteredUsers(tournamentEntity.getRegisteredUsers());
+
+        for (Long taskId : taskIds) {
+            Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
+            if (optionalTaskEntity.isEmpty()){
+                throw new NoSuchElementException("Task with id: " + taskId + " does not exist");
+            }
+            mappedEntity.addTask(optionalTaskEntity.get());
+        }
+
+        return tournamentMapStruct.entityToDto(tournamentRepository.save(mappedEntity));
+    }
+
 }

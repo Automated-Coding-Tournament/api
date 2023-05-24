@@ -28,4 +28,6 @@ public interface TournamentService {
     Boolean isUserRegisteredToTournament(Long tournamentId);
 
     Boolean isUserFinishedParticipating(Long tournamentId);
+
+    TournamentDto editTournament(Long tournamentId, List<Long> taskIds, TournamentCreationDto tournamentCreationDto);
 }
