@@ -16,6 +16,7 @@ import com.pvp.codingtournament.model.tournament.TournamentDto;
 import com.pvp.codingtournament.model.tournament.TournamentParticipationDto;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -224,9 +225,11 @@ public class TournamentServiceImpl implements TournamentService {
         }
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Set<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
 
-        if (!tournamentEntity.getCreatorUser().getUsername().equals(username)){
-            throw new ValidationException("Only the creator of the tournament can edit it");
+        if (!tournamentEntity.getCreatorUser().getUsername().equals(username) && !roles.contains("ROLE_ADMIN")){
+            throw new SecurityException("Only the creator of the tournament can edit it");
         }
 
         TournamentEntity mappedEntity = tournamentMapStruct.creationDtoToEntity(tournamentCreationDto);
@@ -234,7 +237,7 @@ public class TournamentServiceImpl implements TournamentService {
         mappedEntity.setStatus(tournamentEntity.getStatus());
         mappedEntity.setCreatorUser(tournamentEntity.getCreatorUser());
         mappedEntity.setRegisteredUsers(tournamentEntity.getRegisteredUsers());
-
+        mappedEntity.setTournamentTasks(new HashSet<>());
         for (Long taskId : taskIds) {
             Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(taskId);
             if (optionalTaskEntity.isEmpty()){
