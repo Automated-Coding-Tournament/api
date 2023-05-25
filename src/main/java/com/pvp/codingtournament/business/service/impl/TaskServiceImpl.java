@@ -307,17 +307,18 @@ public class TaskServiceImpl implements TaskService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
 
-        if (tournamentParticipationEntity != null && analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
+        tournamentParticipationEntity.setPassed(analysisResults.getPassed());
+        tournamentParticipationEntity.setTotalTestCases(analysisResults.getTotalTestCases());
+        tournamentParticipationEntity.setPassedTestCases(analysisResults.getPassedTestCases());
+        tournamentParticipationEntity.setMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
+        tournamentParticipationEntity.setAverageCpuTime(analysisResults.getAverageCpuTime());
+
+        if (analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
             tournamentParticipationEntity.setFinishedCurrentTask(true);
             tournamentParticipationEntity.incrementCompletedTaskCount();
             tournamentParticipationEntity.addPoints(taskEntity.getPoints());
             tournamentParticipationEntity.addMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
             tournamentParticipationEntity.removeTaskIdFromUnfinishedTasks(taskId);
-            tournamentParticipationEntity.setPassed(analysisResults.getPassed());
-            tournamentParticipationEntity.setTotalTestCases(analysisResults.getTotalTestCases());
-            tournamentParticipationEntity.setPassedTestCases(analysisResults.getPassedTestCases());
-            tournamentParticipationEntity.setMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
-            tournamentParticipationEntity.setAverageCpuTime(analysisResults.getAverageCpuTime());
             tournamentParticipationRepository.save(tournamentParticipationEntity);
         }
         return analysisResults;
