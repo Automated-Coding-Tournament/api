@@ -1,6 +1,7 @@
 package com.pvp.codingtournament.business.repository.model;
 
 import com.pvp.codingtournament.model.AnalysisResults;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,8 +52,20 @@ public class TournamentParticipationEntity {
     @Column(name = "unfinished_task_ids")
     private ArrayList<Long> unfinishedTaskIds;
 
-    @Column(name = "analysis_results")
-    private AnalysisResults analysisResults;
+    @Column(name = "passed_current_task")
+    private Boolean passed;
+
+    @Column(name = "total_test_cases")
+    private Integer totalTestCases;
+
+    @Column(name = "passed_test_cases")
+    private Integer passedTestCases;
+
+    @Column(name = "memory_in_kilobytes")
+    private Integer memoryInKilobytes;
+
+    @Column(name = "average_cpu_time")
+    private Double averageCpuTime;
 
     @ManyToOne
     @JoinColumn(name = "current_task_id")
