@@ -312,6 +312,7 @@ public class TaskServiceImpl implements TaskService {
         tournamentParticipationEntity.setPassedTestCases(analysisResults.getPassedTestCases());
         tournamentParticipationEntity.setMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
         tournamentParticipationEntity.setAverageCpuTime(analysisResults.getAverageCpuTime());
+        tournamentParticipationRepository.save(tournamentParticipationEntity);
 
         if (analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
             tournamentParticipationEntity.setFinishedCurrentTask(true);
