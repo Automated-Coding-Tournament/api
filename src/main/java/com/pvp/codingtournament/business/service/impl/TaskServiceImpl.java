@@ -211,6 +211,7 @@ public class TaskServiceImpl implements TaskService {
         participationEntity.setPassedTestCases(null);
         participationEntity.setMemoryInKilobytes(null);
         participationEntity.setAverageCpuTime(null);
+       participationEntity.setLastTask(unfinishedTaskIds.size() == 1);
 
         tournamentParticipationRepository.save(participationEntity);
         return taskMapper.entityToDto(taskEntity);

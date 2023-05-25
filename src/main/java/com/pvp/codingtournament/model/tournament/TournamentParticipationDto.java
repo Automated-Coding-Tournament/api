@@ -25,6 +25,7 @@ public class TournamentParticipationDto {
     private ArrayList<Long> unfinishedTaskIds;
     private TaskDto task;
     private boolean finishedCurrentTask;
+    private boolean lastTask;
     private Boolean passed;
     private Integer totalTestCases;
     private Integer passedTestCases;

@@ -52,6 +52,9 @@ public class TournamentParticipationEntity {
     @Column(name = "unfinished_task_ids")
     private ArrayList<Long> unfinishedTaskIds;
 
+    @Column(name = "last_task")
+    private boolean lastTask;
+
     @Column(name = "passed_current_task")
     private Boolean passed;
 

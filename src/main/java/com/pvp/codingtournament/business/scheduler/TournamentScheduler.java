@@ -50,6 +50,7 @@ public class TournamentScheduler {
                     tournamentParticipationEntity.setFinishedParticipating(false);
                     tournamentParticipationEntity.setFinishedCurrentTask(false);
                     ArrayList<Long> unfinishedTaskIds = (ArrayList<Long>) tournament.getTournamentTasks().stream().map(TaskEntity::getId).collect(Collectors.toList());
+                    tournamentParticipationEntity.setLastTask(unfinishedTaskIds.size() == 1);
                     tournamentParticipationEntity.setUnfinishedTaskIds(unfinishedTaskIds);
 
                     Random random = new Random();
