@@ -206,6 +206,7 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = optionalTaskEntity.get();
         participationEntity.setTask(taskEntity);
         participationEntity.setFinishedCurrentTask(false);
+        participationEntity.setAnalysisResults(null);
         tournamentParticipationRepository.save(participationEntity);
         return taskMapper.entityToDto(taskEntity);
     }
@@ -307,6 +308,7 @@ public class TaskServiceImpl implements TaskService {
             tournamentParticipationEntity.addPoints(taskEntity.getPoints());
             tournamentParticipationEntity.addMemoryInKilobytes(analysisResults.getMemoryInKilobytes());
             tournamentParticipationEntity.removeTaskIdFromUnfinishedTasks(taskId);
+            tournamentParticipationEntity.setAnalysisResults(analysisResults);
             tournamentParticipationRepository.save(tournamentParticipationEntity);
         }
         return analysisResults;

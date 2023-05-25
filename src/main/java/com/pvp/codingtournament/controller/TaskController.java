@@ -76,10 +76,10 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getCurrentParticipationTaskByTournamentID(tournamentId));
     }
 
-    @PostMapping("/get/nextTournamentTask/{id}")
+    @PostMapping("/tournament/next/{id}")
     public ResponseEntity<TaskDto> nextTournamentTask(@PathVariable("id") Long tournamentId){
         TaskDto taskDto = taskService.nextTournamentTask(tournamentId);
-        return taskDto != null ? ResponseEntity.ok(taskDto) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return taskDto != null ? ResponseEntity.ok(taskDto) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @ApiOperation("Analyzes and runs user submitted code for task")

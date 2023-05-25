@@ -1,5 +1,6 @@
 package com.pvp.codingtournament.business.repository.model;
 
+import com.pvp.codingtournament.model.AnalysisResults;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +50,9 @@ public class TournamentParticipationEntity {
 
     @Column(name = "unfinished_task_ids")
     private ArrayList<Long> unfinishedTaskIds;
+
+    @Column(name = "analysis_results")
+    private AnalysisResults analysisResults;
 
     @ManyToOne
     @JoinColumn(name = "current_task_id")
