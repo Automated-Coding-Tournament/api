@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import java.util.ArrayList;
 
 @Getter
@@ -24,4 +25,9 @@ public class TournamentParticipationDto {
     private ArrayList<Long> unfinishedTaskIds;
     private TaskDto task;
     private boolean finishedCurrentTask;
+    private Boolean passed;
+    private Integer totalTestCases;
+    private Integer passedTestCases;
+    private Integer memoryInKilobytes;
+    private Double averageCpuTime;
 }
