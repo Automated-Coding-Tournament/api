@@ -292,6 +292,7 @@ public class TournamentServiceImpl implements TournamentService {
         for (TournamentParticipationEntity participation : tournamentParticipationEntities) {
             tournamentParticipationRepository.deleteById(participation.getId());
         }
+        tournamentRepository.deleteAllRegistrationsByTournamentId(tournamentEntity.getId());
         tournamentRepository.deleteById(tournamentEntity.getId());
     }
 

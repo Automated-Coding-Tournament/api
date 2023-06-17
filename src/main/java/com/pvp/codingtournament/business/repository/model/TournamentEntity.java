@@ -68,14 +68,14 @@ public class TournamentEntity {
     @JsonManagedReference
     private UserEntity creatorUser;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany
     @JoinTable(name = "user_tournament",
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             joinColumns = @JoinColumn(name = "tournament_id", referencedColumnName = "tournament_id"))
     @JsonManagedReference
     private Set<UserEntity> registeredUsers;
 
-    @ManyToMany(cascade = {CascadeType.REMOVE})
+    @ManyToMany
     @JoinTable(name = "tournament_task",
             inverseJoinColumns = @JoinColumn(name = "task_id", referencedColumnName = "task_id"),
             joinColumns = @JoinColumn(name = "tournament_id", referencedColumnName = "tournament_id"))
