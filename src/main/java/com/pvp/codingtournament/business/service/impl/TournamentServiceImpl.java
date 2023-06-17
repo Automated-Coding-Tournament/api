@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -268,6 +269,7 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentMapStruct.entityToDto(tournamentRepository.save(mappedEntity));
     }
 
+    @Transactional
     @Override
     public void deleteTournament(Long tournamentId) {
         Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
