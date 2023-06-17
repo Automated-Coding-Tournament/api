@@ -5,6 +5,7 @@ import com.pvp.codingtournament.model.tournament.TournamentDto;
 import com.pvp.codingtournament.model.tournament.TournamentParticipationDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TournamentService {
     List<TournamentDto> findAllTournaments();
@@ -23,7 +24,7 @@ public interface TournamentService {
 
     List<TournamentDto> getUserTournamentHistory();
 
-    List<TournamentParticipationDto> getTournamentUserParticipationLeaderboard(Long tournamentId);
+    List<Map<String, Object>> getTournamentUserParticipationLeaderboard(Long tournamentId);
 
     Boolean isUserRegisteredToTournament(Long tournamentId);
 

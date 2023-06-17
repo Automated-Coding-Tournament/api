@@ -189,7 +189,7 @@ public class TaskServiceImpl implements TaskService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
 
-        if (participationEntity.getTask() != null && !participationEntity.isFinishedCurrentTask()){
+        if (participationEntity.getTask() != null && !participationEntity.getFinishedCurrentTask()){
             return taskMapper.entityToDto(participationEntity.getTask());
         }
 
@@ -315,7 +315,7 @@ public class TaskServiceImpl implements TaskService {
         tournamentParticipationEntity.setAverageCpuTime(analysisResults.getAverageCpuTime());
         tournamentParticipationRepository.save(tournamentParticipationEntity);
 
-        if (analysisResults.getPassed() && !tournamentParticipationEntity.isFinishedCurrentTask() && !tournamentParticipationEntity.isFinishedParticipating()){
+        if (analysisResults.getPassed() && !tournamentParticipationEntity.getFinishedCurrentTask() && !tournamentParticipationEntity.getFinishedParticipating()){
             tournamentParticipationEntity.setFinishedCurrentTask(true);
             tournamentParticipationEntity.incrementCompletedTaskCount();
             tournamentParticipationEntity.addPoints(taskEntity.getPoints());

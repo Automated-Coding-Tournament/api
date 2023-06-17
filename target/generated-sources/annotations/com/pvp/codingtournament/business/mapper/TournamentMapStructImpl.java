@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-05-25T21:34:35+0300",
+    date = "2023-06-17T16:53:14+0300",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Oracle Corporation)"
 )
 @Component
@@ -84,13 +84,19 @@ public class TournamentMapStructImpl implements TournamentMapStruct {
         tournamentParticipationDto.setPoints( participationEntity.getPoints() );
         tournamentParticipationDto.setCompletedTaskCount( participationEntity.getCompletedTaskCount() );
         tournamentParticipationDto.setAverageMemoryInKilobytes( participationEntity.getAverageMemoryInKilobytes() );
-        tournamentParticipationDto.setFinishedParticipating( participationEntity.isFinishedParticipating() );
+        if ( participationEntity.getFinishedParticipating() != null ) {
+            tournamentParticipationDto.setFinishedParticipating( participationEntity.getFinishedParticipating() );
+        }
         ArrayList<Long> arrayList = participationEntity.getUnfinishedTaskIds();
         if ( arrayList != null ) {
             tournamentParticipationDto.setUnfinishedTaskIds( new ArrayList<Long>( arrayList ) );
         }
-        tournamentParticipationDto.setFinishedCurrentTask( participationEntity.isFinishedCurrentTask() );
-        tournamentParticipationDto.setLastTask( participationEntity.isLastTask() );
+        if ( participationEntity.getFinishedCurrentTask() != null ) {
+            tournamentParticipationDto.setFinishedCurrentTask( participationEntity.getFinishedCurrentTask() );
+        }
+        if ( participationEntity.getLastTask() != null ) {
+            tournamentParticipationDto.setLastTask( participationEntity.getLastTask() );
+        }
         tournamentParticipationDto.setPassed( participationEntity.getPassed() );
         tournamentParticipationDto.setTotalTestCases( participationEntity.getTotalTestCases() );
         tournamentParticipationDto.setPassedTestCases( participationEntity.getPassedTestCases() );

@@ -78,8 +78,8 @@ public class TournamentScheduler {
 
     private void processParticipationRecords(List<TournamentParticipationEntity> participationRecordList){
         for (TournamentParticipationEntity participationRecord : participationRecordList) {
-            if (!participationRecord.isFinishedParticipating()) {
-                if (!participationRecord.isFinishedCurrentTask()) {
+            if (!participationRecord.getFinishedParticipating()) {
+                if (!participationRecord.getFinishedCurrentTask()) {
                     participationRecord.deducePoints();
                 }
                 participationRecord.calculateMemoryAverage();

@@ -47,13 +47,13 @@ public class TournamentParticipationEntity {
     private int averageMemoryInKilobytes;
 
     @Column(name = "finished_participating")
-    private boolean finishedParticipating;
+    private Boolean finishedParticipating;
 
     @Column(name = "unfinished_task_ids")
     private ArrayList<Long> unfinishedTaskIds;
 
     @Column(name = "last_task")
-    private boolean lastTask;
+    private Boolean lastTask;
 
     @Column(name = "passed_current_task")
     private Boolean passed;
@@ -75,7 +75,7 @@ public class TournamentParticipationEntity {
     private TaskEntity task;
 
     @Column(name = "finished_current_task")
-    private boolean finishedCurrentTask;
+    private Boolean finishedCurrentTask;
 
     public void incrementCompletedTaskCount() {
         this.completedTaskCount++;

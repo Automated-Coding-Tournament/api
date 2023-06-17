@@ -16,6 +16,7 @@ import com.pvp.codingtournament.model.tournament.TournamentDto;
 import com.pvp.codingtournament.model.tournament.TournamentParticipationDto;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -113,7 +115,7 @@ public class TournamentServiceImpl implements TournamentService {
     public void finishUserParticipationInTournament(Long tournamentId) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity participationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
-        if (!participationEntity.isFinishedCurrentTask()) {
+        if (!participationEntity.getFinishedCurrentTask()) {
             participationEntity.deducePoints();
         }
         participationEntity.calculateMemoryAverage();
@@ -169,7 +171,7 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public List<TournamentParticipationDto> getTournamentUserParticipationLeaderboard(Long tournamentId) {
+    public List<Map<String, Object>> getTournamentUserParticipationLeaderboard(Long tournamentId) {
         Optional<TournamentEntity> optionalTournamentEntity = tournamentRepository.findById(tournamentId);
         if (optionalTournamentEntity.isEmpty()){
             throw new NoSuchElementException("Tournament with id: " + tournamentId + " does not exist");
@@ -186,7 +188,23 @@ public class TournamentServiceImpl implements TournamentService {
             }
         });
 
-        return tournamentParticipationEntities.stream().map(tournamentMapStruct::participationEntityToDto).collect(Collectors.toList());
+        List<Map<String, Object>> leaderboard = new ArrayList<>();
+        int size = Math.min(tournamentParticipationEntities.size(), 10);
+
+        for (int i = 0; i < tournamentParticipationEntities.size(); i++) {
+            UserEntity userEntity = tournamentParticipationEntities.get(i).getUser();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", userEntity.getId());
+            jsonObject.put("index", i);
+            jsonObject.put("username", userEntity.getUsername());
+            jsonObject.put("name", userEntity.getName());
+            jsonObject.put("surname", userEntity.getSurname());
+            jsonObject.put("email", userEntity.getEmail());
+            jsonObject.put("phoneNumber", userEntity.getPhoneNumber());
+            leaderboard.add(jsonObject.toMap());
+        }
+
+        return leaderboard;
     }
 
     @Override
@@ -208,7 +226,7 @@ public class TournamentServiceImpl implements TournamentService {
         }
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         TournamentParticipationEntity tournamentParticipationEntity = tournamentParticipationRepository.findByUserUsernameAndTournamentId(username, tournamentId);
-        return tournamentParticipationEntity.isFinishedParticipating();
+        return tournamentParticipationEntity.getFinishedParticipating();
     }
 
     @Override

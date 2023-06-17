@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/tournament")
@@ -62,7 +63,7 @@ public class TournamentController {
     }
 
     @GetMapping("/get/participation/leaderboard/{id}")
-    public ResponseEntity<List<TournamentParticipationDto>> getTournamentUserParticipationLeaderboard(@PathVariable("id") Long tournamentId){
+    public ResponseEntity<List<Map<String, Object>>> getTournamentUserParticipationLeaderboard(@PathVariable("id") Long tournamentId){
         return ResponseEntity.ok(tournamentService.getTournamentUserParticipationLeaderboard(tournamentId));
     }
 
