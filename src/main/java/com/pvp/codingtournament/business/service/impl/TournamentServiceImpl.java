@@ -197,6 +197,7 @@ public class TournamentServiceImpl implements TournamentService {
             jsonObject.put("id", userEntity.getId());
             jsonObject.put("index", i);
             jsonObject.put("username", userEntity.getUsername());
+            jsonObject.put("points", tournamentParticipationEntities.get(i).getPoints());
             jsonObject.put("name", userEntity.getName());
             jsonObject.put("surname", userEntity.getSurname());
             jsonObject.put("email", userEntity.getEmail());
